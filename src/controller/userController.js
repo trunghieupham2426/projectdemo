@@ -3,7 +3,7 @@ const User = require('../model/userModel');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { promisify } = require('util');
+const rateLimit = require('express-rate-limit');
 
 const getAllUsers = async (req, res, next) => {
   const allUser = await User.findAll();
@@ -13,17 +13,29 @@ const getAllUsers = async (req, res, next) => {
   //not finish test only
 };
 
+const protectingRoutes = async (req, res) => {
+  // console.log(req.headers.authorization);
+  const token =
+    req.headers.authorization.startsWith('Bearer') &&
+    req.headers.authorization.split(' ')[1];
+  if (!token) {
+    return res.send(`you're not login`);
+  }
+};
+
+const updatePassword = async (req, res) => {};
+
 const signup = async (req, res) => {
   try {
     const { email, username, password } = req.body;
     const hashPWD = await bcrypt.hash(password, 8);
     const user = await User.create({ email, username, password: hashPWD });
-    const token = generaToken('email', email);
+    const token = generaToken({ email }, '3m');
     sendEmail(
       email,
       'Verify Your Email',
       'click here to verify your email',
-      'verify',
+      'api/users/verify',
       token
     );
     res.status(200).json({
@@ -43,7 +55,8 @@ const login = async (req, res) => {
     if (!user) {
       return res.send('your email not correct');
     }
-    const { email, password, isActive, countLogin } = user;
+    const { email, password, isActive, countLogin, avatar_path, username } =
+      user;
     if (countLogin >= 3 || !isActive) {
       return res.send(
         'your account has been disabled or not active yet , please contact admin '
@@ -53,17 +66,35 @@ const login = async (req, res) => {
     if (!isCorrect) {
       user.countLogin++;
       user.save();
-      res.send(user);
-    } else {
-      user.countLogin = 0;
-      user.save();
-      res.send(user);
+      return res.send('invalid password');
     }
+    const token = generaToken({ id: user.id, role: user.role }, '1d');
+    user.countLogin = 0;
+    user.save();
+    res.status(200).json({
+      status: 'success',
+      token: token,
+      data: {
+        user: {
+          email: email,
+          username: username,
+          avatar_path: avatar_path,
+        },
+      },
+    });
   } catch (err) {
     console.log(err);
     res.send('login fail bla bla');
   }
 };
+
+const loginLimiter = rateLimit({
+  windowMs: 3 * 60 * 1000, // 3 minutes
+  max: 5, // 5 request per / 3 minutes
+  message: 'Something went wrong , try again after 3 minutes',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 const verifyUserEmail = async (req, res, next) => {
   try {
@@ -87,20 +118,23 @@ const verifyUserEmail = async (req, res, next) => {
 module.exports = {
   signup: signup,
   login: login,
+  updatePassword: updatePassword,
+  loginLimiter: loginLimiter,
   verifyUserEmail: verifyUserEmail,
+  protectingRoutes: protectingRoutes,
   getAllUsers: getAllUsers,
 };
 
 // helper function
 
-function generaToken(key, value) {
-  return jwt.sign({ [key]: value }, process.env.JWT_SECRET, {
-    expiresIn: '3m',
+function generaToken(key, time) {
+  return jwt.sign(key, process.env.JWT_SECRET, {
+    expiresIn: time,
   });
 }
 
 async function sendEmail(userEmail, subject, text, endpoint, token) {
-  const url = `http:127.0.0.1:5000`;
+  const domain = `http:127.0.0.1:5000`;
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -114,7 +148,7 @@ async function sendEmail(userEmail, subject, text, endpoint, token) {
     to: userEmail,
     subject: subject,
     html: `<a href=${
-      url + '/api/users/' + endpoint + '/' + token
+      domain + '/' + endpoint + '/' + token
     } target="_blank">${text}</a>`,
   };
   await transporter.sendMail(mailOption);
