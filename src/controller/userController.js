@@ -18,7 +18,7 @@ const signup = async (req, res) => {
     const { email, username, password } = req.body;
     const hashPWD = await bcrypt.hash(password, 8);
     const user = await User.create({ email, username, password: hashPWD });
-    const token = generaToken(user.id);
+    const token = generaToken('email', email);
     sendEmail(
       email,
       'Verify Your Email',
@@ -36,29 +36,65 @@ const signup = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { email: inputEmail, password: inputPassword } = req.body;
+    const user = await User.findOne({ where: { email: inputEmail } });
+    if (!user) {
+      return res.send('your email not correct');
+    }
+    const { email, password, isActive, countLogin } = user;
+    if (countLogin >= 3 || !isActive) {
+      return res.send(
+        'your account has been disabled or not active yet , please contact admin '
+      );
+    }
+    const isCorrect = await comparePassword(inputPassword, password);
+    if (!isCorrect) {
+      user.countLogin++;
+      user.save();
+      res.send(user);
+    } else {
+      user.countLogin = 0;
+      user.save();
+      res.send(user);
+    }
+  } catch (err) {
+    console.log(err);
+    res.send('login fail bla bla');
+  }
+};
+
 const verifyUserEmail = async (req, res, next) => {
   try {
     const token = req.params.token;
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findOne({
       attributes: ['id', 'isActive'],
       where: {
-        id: decoded.id,
+        email: decoded.email,
       },
     });
     user.isActive = true;
     user.save();
-    res.redirect('/users');
+    res.redirect('/api/users');
     next();
   } catch (err) {
     res.send('try again later');
   }
 };
 
+module.exports = {
+  signup: signup,
+  login: login,
+  verifyUserEmail: verifyUserEmail,
+  getAllUsers: getAllUsers,
+};
+
 // helper function
 
-function generaToken(id) {
-  return jwt.sign({ id: id }, process.env.JWT_SECRET, {
+function generaToken(key, value) {
+  return jwt.sign({ [key]: value }, process.env.JWT_SECRET, {
     expiresIn: '3m',
   });
 }
@@ -84,8 +120,6 @@ async function sendEmail(userEmail, subject, text, endpoint, token) {
   await transporter.sendMail(mailOption);
 }
 
-module.exports = {
-  signup: signup,
-  verifyUserEmail: verifyUserEmail,
-  getAllUsers: getAllUsers,
-};
+async function comparePassword(inputPwd, userPwd) {
+  return await bcrypt.compare(inputPwd, userPwd);
+}

@@ -22,7 +22,6 @@ const User = sequelize.define(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     phone: {
       type: DataTypes.STRING,
@@ -32,6 +31,10 @@ const User = sequelize.define(
     },
     avatar_path: {
       type: DataTypes.STRING,
+    },
+    countLogin: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     role: {
       type: DataTypes.ENUM('0', '1'),
