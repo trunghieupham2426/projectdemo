@@ -4,32 +4,120 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const rateLimit = require('express-rate-limit');
+const userSchemaValidate = require('../validate/validateUser');
+const AppError = require('./../utils/appError');
+// image upload setting
+const multer = require('multer');
+const cloudinary = require('./../utils/imageUpload');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/image/user');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `user-${req.user.id}-avatar.jpeg`); // override the images
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Please upload only images'));
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+const uploadAvatar = upload.single('avatar');
+
+//====================
+
+const updateMe = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ where: { id: req.user.id } });
+    const { phone, age } = req.body;
+    if (req.file) {
+      const img = await cloudinary.uploader.upload(req.file.path, {
+        public_id: req.file.filename,
+        folder: 'DEV',
+      });
+      user.avatar_path = await img.url;
+    }
+    if (phone) user.phone = phone;
+    if (age) user.age = age;
+    res.send(user);
+    user.save();
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
 
 const getAllUsers = async (req, res, next) => {
-  const allUser = await User.findAll();
+  // const allUser = await User.findAll();
 
-  res.send(JSON.stringify(allUser));
+  // res.send(JSON.stringify(allUser));
+  res.send('hello');
 
   //not finish test only
 };
 
-const protectingRoutes = async (req, res) => {
-  // console.log(req.headers.authorization);
-  const token =
-    req.headers.authorization.startsWith('Bearer') &&
-    req.headers.authorization.split(' ')[1];
-  if (!token) {
-    return res.send(`you're not login`);
+const protectingRoutes = async (req, res, next) => {
+  try {
+    const token =
+      req.headers.authorization?.startsWith('Bearer') &&
+      req.headers.authorization.split(' ')[1];
+    if (!token) {
+      return next(new AppError('You are not logged in', 401));
+    }
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({
+      attributes: { exclude: ['password', 'countLogin'] },
+      where: { id: decoded.id },
+    });
+    if (!user) {
+      return next(new AppError('this user does not exist', 401));
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    next(err);
   }
 };
 
-const updatePassword = async (req, res) => {};
-
-const signup = async (req, res) => {
+const updatePassword = async (req, res, next) => {
   try {
-    const { email, username, password } = req.body;
+    const { oldPwd, newPwd } = req.body;
+    const user = await User.findOne({
+      where: { id: req.user.id },
+    });
+    const checkPwd = await comparePassword(oldPwd, user.password);
+    if (!checkPwd) {
+      return next(new AppError('please insert correct old password', 400));
+    }
+    const hashPWD = await bcrypt.hash(newPwd, 8);
+    user.password = hashPWD;
+    user.save();
+    res.send('password updated');
+  } catch (err) {
+    next(err);
+  }
+};
+
+const signup = async (req, res, next) => {
+  try {
+    const { email, username, password } =
+      await userSchemaValidate.validateAsync(req.body);
     const hashPWD = await bcrypt.hash(password, 8);
-    const user = await User.create({ email, username, password: hashPWD });
+    const user = await User.create({
+      email,
+      username,
+      password: hashPWD,
+    });
     const token = generaToken({ email }, '3m');
     sendEmail(
       email,
@@ -43,31 +131,42 @@ const signup = async (req, res) => {
       message: 'please check your email to confirm within 3 minutes ',
     });
   } catch (err) {
-    console.log(err);
-    res.send('something went wrong');
+    const errMsg = err?.errors ? err.errors[0].message : undefined;
+    if (errMsg) {
+      return next(new AppError(errMsg, 401));
+    }
+    next(err);
   }
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email: inputEmail, password: inputPassword } = req.body;
+    if (!inputEmail || !inputPassword) {
+      return next(new AppError('Please provide email and password!', 400));
+    }
+
     const user = await User.findOne({ where: { email: inputEmail } });
     if (!user) {
-      return res.send('your email not correct');
+      return next(new AppError('your email not correct', 400));
     }
     const { email, password, isActive, countLogin, avatar_path, username } =
       user;
     if (countLogin >= 3 || !isActive) {
-      return res.send(
-        'your account has been disabled or not active yet , please contact admin '
+      return next(
+        new AppError(
+          'your account has been disabled or not active yet , please contact admin',
+          400
+        )
       );
     }
     const isCorrect = await comparePassword(inputPassword, password);
     if (!isCorrect) {
       user.countLogin++;
       user.save();
-      return res.send('invalid password');
+      return next(new AppError('invalid password', 400));
     }
+
     const token = generaToken({ id: user.id, role: user.role }, '1d');
     user.countLogin = 0;
     user.save();
@@ -84,7 +183,7 @@ const login = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.send('login fail bla bla');
+    next(err);
   }
 };
 
@@ -111,7 +210,7 @@ const verifyUserEmail = async (req, res, next) => {
     res.redirect('/api/users');
     next();
   } catch (err) {
-    res.send('try again later');
+    res.send('something went wrong , please contact the administrator');
   }
 };
 
@@ -119,6 +218,8 @@ module.exports = {
   signup: signup,
   login: login,
   updatePassword: updatePassword,
+  updateMe: updateMe,
+  uploadAvatar: uploadAvatar,
   loginLimiter: loginLimiter,
   verifyUserEmail: verifyUserEmail,
   protectingRoutes: protectingRoutes,

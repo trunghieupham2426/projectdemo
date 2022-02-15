@@ -9,15 +9,23 @@ const {
   verifyUserEmail,
   protectingRoutes,
   updatePassword,
-  getAllUsers,
+  updateMe,
+  uploadAvatar,
 } = require('../controller/userController');
 
-router.get('/', getAllUsers);
+router.get('/', (req, res) => {
+  res.send('hello');
+});
+router.get('/verify/:token', verifyUserEmail);
 
 router.post('/signup', signup);
 router.post('/login', loginLimiter, login);
-router.patch('/updateMyPassword', protectingRoutes, updatePassword);
+router.patch(
+  '/updateMyPassword',
+  protectingRoutes,
 
-router.get('/verify/:token', verifyUserEmail);
+  updatePassword
+);
+router.patch('/updateMe', protectingRoutes, uploadAvatar, updateMe);
 
 module.exports = router;

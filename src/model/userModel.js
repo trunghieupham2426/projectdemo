@@ -31,6 +31,8 @@ const User = sequelize.define(
     },
     avatar_path: {
       type: DataTypes.STRING,
+      defaultValue:
+        'https://res.cloudinary.com/dyw35assc/image/upload/v1644906261/DEV/default_gphmz1.png',
     },
     countLogin: {
       type: DataTypes.INTEGER,
