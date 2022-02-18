@@ -2,19 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
-const sequelize = require('./src/utils/connectDB');
 const userRouter = require('./src/route/userRouter');
-const User = require('./src/model/userModel');
-const { get } = require('express/lib/response');
-
-//----------------------test------------------------
+const { sequelize } = require('./src/models');
 
 // middleware
 app.use(express.json({ limit: '50mb' })); //body parser
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-
-sequelize.sync(); //create tables
 
 //route
 app.use('/api/users', userRouter);
@@ -36,6 +30,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log('server running on PORT ' + PORT);
+  await sequelize.authenticate();
+  console.log('Database Connected!');
 });

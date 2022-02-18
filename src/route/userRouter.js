@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
+const validate = require('./../validate/validateUser');
 
 const {
   signup,
   login,
-  loginLimiter,
   verifyUserEmail,
-  protectingRoutes,
   updatePassword,
   updateMe,
   uploadAvatar,
@@ -18,14 +18,22 @@ router.get('/', (req, res) => {
 });
 router.get('/verify/:token', verifyUserEmail);
 
-router.post('/signup', signup);
-router.post('/login', loginLimiter, login);
+router.post('/signup', validate.signUpValidate, signup);
+router.post('/login', auth.loginLimiter, login);
 router.patch(
   '/updateMyPassword',
-  protectingRoutes,
+  auth.protectingRoutes,
 
   updatePassword
 );
-router.patch('/updateMe', protectingRoutes, uploadAvatar, updateMe);
+router.patch(
+  '/updateMe',
+  auth.protectingRoutes,
+  uploadAvatar,
+  validate.updateMeValidate,
+  updateMe
+);
 
 module.exports = router;
+
+// module.exports = { userRouter: router };

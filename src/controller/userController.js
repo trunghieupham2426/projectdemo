@@ -1,11 +1,8 @@
 require('dotenv').config();
-const User = require('../model/userModel');
-const nodemailer = require('nodemailer');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const rateLimit = require('express-rate-limit');
-const userSchemaValidate = require('../validate/validateUser');
+const { User } = require('../models');
 const AppError = require('./../utils/appError');
+const helperFn = require('../utils/helperFn');
 // image upload setting
 const multer = require('multer');
 const cloudinary = require('./../utils/imageUpload');
@@ -42,49 +39,20 @@ const updateMe = async (req, res, next) => {
     const { phone, age } = req.body;
     if (req.file) {
       const img = await cloudinary.uploader.upload(req.file.path, {
-        public_id: req.file.filename,
+        public_id: req.file.filename, // define filename
         folder: 'DEV',
       });
       user.avatar_path = await img.url;
     }
     if (phone) user.phone = phone;
     if (age) user.age = age;
-    res.send(user);
+    res.status(200).json({
+      status: 'success',
+      data: user,
+    });
     user.save();
   } catch (err) {
     console.log(err);
-    next(err);
-  }
-};
-
-const getAllUsers = async (req, res, next) => {
-  // const allUser = await User.findAll();
-
-  // res.send(JSON.stringify(allUser));
-  res.send('hello');
-
-  //not finish test only
-};
-
-const protectingRoutes = async (req, res, next) => {
-  try {
-    const token =
-      req.headers.authorization?.startsWith('Bearer') &&
-      req.headers.authorization.split(' ')[1];
-    if (!token) {
-      return next(new AppError('You are not logged in', 401));
-    }
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({
-      attributes: { exclude: ['password', 'countLogin'] },
-      where: { id: decoded.id },
-    });
-    if (!user) {
-      return next(new AppError('this user does not exist', 401));
-    }
-    req.user = user;
-    next();
-  } catch (err) {
     next(err);
   }
 };
@@ -95,7 +63,7 @@ const updatePassword = async (req, res, next) => {
     const user = await User.findOne({
       where: { id: req.user.id },
     });
-    const checkPwd = await comparePassword(oldPwd, user.password);
+    const checkPwd = await helperFn.comparePassword(oldPwd, user.password);
     if (!checkPwd) {
       return next(new AppError('please insert correct old password', 400));
     }
@@ -110,16 +78,15 @@ const updatePassword = async (req, res, next) => {
 
 const signup = async (req, res, next) => {
   try {
-    const { email, username, password } =
-      await userSchemaValidate.validateAsync(req.body);
+    const { email, username, password } = req.body;
     const hashPWD = await bcrypt.hash(password, 8);
     const user = await User.create({
       email,
       username,
       password: hashPWD,
     });
-    const token = generaToken({ email }, '3m');
-    sendEmail(
+    const token = helperFn.generaToken({ email }, '3m');
+    helperFn.sendEmail(
       email,
       'Verify Your Email',
       'click here to verify your email',
@@ -160,14 +127,14 @@ const login = async (req, res, next) => {
         )
       );
     }
-    const isCorrect = await comparePassword(inputPassword, password);
+    const isCorrect = await helperFn.comparePassword(inputPassword, password);
     if (!isCorrect) {
       user.countLogin++;
       user.save();
       return next(new AppError('invalid password', 400));
     }
 
-    const token = generaToken({ id: user.id, role: user.role }, '1d');
+    const token = helperFn.generaToken({ id: user.id, role: user.role }, '1d');
     user.countLogin = 0;
     user.save();
     res.status(200).json({
@@ -186,14 +153,6 @@ const login = async (req, res, next) => {
     next(err);
   }
 };
-
-const loginLimiter = rateLimit({
-  windowMs: 3 * 60 * 1000, // 3 minutes
-  max: 5, // 5 request per / 3 minutes
-  message: 'Something went wrong , try again after 3 minutes',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
 
 const verifyUserEmail = async (req, res, next) => {
   try {
@@ -220,41 +179,5 @@ module.exports = {
   updatePassword: updatePassword,
   updateMe: updateMe,
   uploadAvatar: uploadAvatar,
-  loginLimiter: loginLimiter,
   verifyUserEmail: verifyUserEmail,
-  protectingRoutes: protectingRoutes,
-  getAllUsers: getAllUsers,
 };
-
-// helper function
-
-function generaToken(key, time) {
-  return jwt.sign(key, process.env.JWT_SECRET, {
-    expiresIn: time,
-  });
-}
-
-async function sendEmail(userEmail, subject, text, endpoint, token) {
-  const domain = `http:127.0.0.1:5000`;
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const mailOption = {
-    from: process.env.EMAIL,
-    to: userEmail,
-    subject: subject,
-    html: `<a href=${
-      domain + '/' + endpoint + '/' + token
-    } target="_blank">${text}</a>`,
-  };
-  await transporter.sendMail(mailOption);
-}
-
-async function comparePassword(inputPwd, userPwd) {
-  return await bcrypt.compare(inputPwd, userPwd);
-}
