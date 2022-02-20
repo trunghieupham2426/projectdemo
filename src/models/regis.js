@@ -22,10 +22,18 @@ module.exports = (sequelize, Sequelize) => {
       class_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Class',
+          key: 'id',
+        },
       },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
       },
       status: {
         type: Sequelize.ENUM('pending', 'cancel', 'active'),

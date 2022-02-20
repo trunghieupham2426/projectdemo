@@ -11,10 +11,18 @@ module.exports = {
       class_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Classes',
+          key: 'id',
+        },
       },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
       },
       status: {
         type: Sequelize.ENUM('pending', 'cancel', 'active'),
