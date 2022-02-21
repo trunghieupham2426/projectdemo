@@ -67,7 +67,7 @@ const signup = async (req, res, next) => {
       email,
       'Verify Your Email',
       'click here to verify your email',
-      'api/users/verify',
+      '/api/users/verify/',
       token
     );
     res.status(200).json({

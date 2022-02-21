@@ -10,7 +10,13 @@ exports.generaToken = (key, time) => {
   });
 };
 
-exports.sendEmail = async (userEmail, subject, text, endpoint, token) => {
+exports.sendEmail = async (
+  userEmail,
+  subject,
+  text,
+  endpoint = '/',
+  token = ''
+) => {
   const domain = `http:127.0.0.1:5000`;
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -24,9 +30,7 @@ exports.sendEmail = async (userEmail, subject, text, endpoint, token) => {
     from: process.env.EMAIL,
     to: userEmail,
     subject: subject,
-    html: `<a href=${
-      domain + '/' + endpoint + '/' + token
-    } target="_blank">${text}</a>`,
+    html: `<a href=${domain + endpoint + token} target="_blank">${text}</a>`,
   };
   await transporter.sendMail(mailOption);
 };

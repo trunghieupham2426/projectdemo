@@ -8,7 +8,8 @@ exports.protectingRoutes = async (req, res, next) => {
     const token =
       req.headers.authorization?.startsWith('Bearer') &&
       req.headers.authorization.split(' ')[1];
-    if (!token) {
+
+    if (!token || token === 'null') {
       return next(new AppError('You are not logged in', 401));
     }
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
