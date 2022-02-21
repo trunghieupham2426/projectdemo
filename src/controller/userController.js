@@ -3,33 +3,10 @@ const bcrypt = require('bcryptjs');
 const { User } = require('../models');
 const AppError = require('./../utils/appError');
 const helperFn = require('../utils/helperFn');
-// image upload setting
-const multer = require('multer');
+const jwt = require('jsonwebtoken');
 const cloudinary = require('./../utils/imageUpload');
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/image/user');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `user-${req.user.id}-avatar.jpeg`); // override the images
-  },
-});
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Please upload only images'));
-  }
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
-
-const uploadAvatar = upload.single('avatar');
+const uploadAvatar = helperFn.upload.single('avatar');
 
 //====================
 
@@ -167,9 +144,8 @@ const verifyUserEmail = async (req, res, next) => {
     user.isActive = true;
     user.save();
     res.redirect('/api/users');
-    next();
   } catch (err) {
-    res.send('something went wrong , please contact the administrator');
+    next(err);
   }
 };
 

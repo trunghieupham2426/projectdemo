@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const userRouter = require('./src/route/userRouter');
+const classRouter = require('./src/route/classRouter');
 const { sequelize } = require('./src/models');
 
 // middleware
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //route
 app.use('/api/users', userRouter);
+app.use('/api/classes', classRouter);
 
 //error handling
 app.all('*', (req, res, next) => {

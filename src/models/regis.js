@@ -42,7 +42,6 @@ module.exports = (sequelize, Sequelize) => {
       },
       regis_date: {
         type: Sequelize.DATE,
-        allowNull: false,
       },
       adm_action: {
         type: Sequelize.ENUM('active', 'reject'),
@@ -51,6 +50,7 @@ module.exports = (sequelize, Sequelize) => {
     {
       sequelize,
       modelName: 'Regis',
+      timestamps: false,
     }
   );
   return Regis;

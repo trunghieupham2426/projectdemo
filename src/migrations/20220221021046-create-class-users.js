@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('ActiveClasses', {
+    await queryInterface.createTable('Class_Users', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -9,12 +9,20 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       class_id: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Classes',
+          key: 'id',
+        },
       },
       user_id: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
       },
       createdAt: {
         field: 'created_at',
@@ -29,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('ActiveClasses');
+    await queryInterface.dropTable('Class_Users');
   },
 };

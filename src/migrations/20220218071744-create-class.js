@@ -20,6 +20,7 @@ module.exports = {
       current_student: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       subject: {
         type: Sequelize.STRING,

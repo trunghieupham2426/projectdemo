@@ -31,7 +31,7 @@ module.exports = {
       },
       regis_date: {
         type: Sequelize.DATE,
-        allowNull: false,
+        defaultValue: Sequelize.fn('now'),
       },
       adm_action: {
         type: Sequelize.ENUM('accept', 'reject'),

@@ -8,7 +8,11 @@ module.exports = (sequelize, Sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsToMany(models.User, { through: 'Regis' });
+      this.belongsToMany(models.User, {
+        through: 'Regis',
+        foreignKey: 'class_id',
+        otherKey: 'user_id',
+      });
     }
   }
   Class.init(
@@ -31,6 +35,7 @@ module.exports = (sequelize, Sequelize) => {
       current_student: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       subject: {
         type: Sequelize.STRING,
@@ -48,6 +53,7 @@ module.exports = (sequelize, Sequelize) => {
     {
       sequelize,
       modelName: 'Class',
+      timestamps: false,
     }
   );
   return Class;
