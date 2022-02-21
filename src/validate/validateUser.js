@@ -46,6 +46,23 @@ const updateMeSchema = Joi.object({
   age: Joi.number().min(1).max(100),
 });
 
+const classSchema = Joi.object({
+  class_id: Joi.string()
+    .required()
+    .trim()
+    .empty('')
+    .error(new AppError('class_id is required and not empty', 401)),
+});
+
+exports.classValidate = async (req, res, next) => {
+  try {
+    await classSchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.signUpValidate = async (req, res, next) => {
   try {
     await signUpValidateSchema.validateAsync(req.body);

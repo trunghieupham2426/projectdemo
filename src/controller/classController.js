@@ -5,9 +5,6 @@ const helperFn = require('./../utils/helperFn');
 const registerClass = async (req, res, next) => {
   try {
     const { class_id } = req.body;
-    if (!class_id) {
-      return next(new AppError('missing classId', 401));
-    }
     const user_id = req.user.id;
     const currentClass = await Class.findOne({ where: { id: class_id } });
     if (!currentClass || currentClass.status === 'close') {
@@ -54,9 +51,6 @@ const registerClass = async (req, res, next) => {
 const cancelRegisClass = async (req, res, next) => {
   try {
     const { class_id } = req.body;
-    if (!class_id) {
-      return next(new AppError('missing classId', 401));
-    }
     const cancelClass = await Regis.findOne({
       where: { class_id: class_id, status: 'pending' },
     });
@@ -75,7 +69,36 @@ const cancelRegisClass = async (req, res, next) => {
   }
 };
 
+const getAllClass = async (req, res, next) => {
+  try {
+    const allClass = await Class.findAll();
+    res.send(allClass);
+  } catch (err) {
+    // console.log(err);
+    next(err);
+  }
+};
+
+const getUserRegisCLass = async (req, res, next) => {
+  //not finished yet
+  //127.0.0.1:5000/api/classes/myRegisteredClass?status=pending,active,cancel
+  try {
+    console.log(req.query.status.split(','));
+    const user_id = req.user.id;
+    const myClass = await Regis.findAll({
+      where: { user_id: user_id },
+      include: [Class],
+    });
+    res.send(myClass);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 module.exports = {
   registerClass: registerClass,
   cancelRegisClass: cancelRegisClass,
+  getAllClass: getAllClass,
+  getUserRegisCLass: getUserRegisCLass,
 };

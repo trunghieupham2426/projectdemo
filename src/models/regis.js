@@ -9,6 +9,7 @@ module.exports = (sequelize, Sequelize) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Class, { foreignKey: 'class_id' });
     }
   }
   Regis.init(
