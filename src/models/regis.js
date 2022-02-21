@@ -13,12 +13,6 @@ module.exports = (sequelize, Sequelize) => {
   }
   Regis.init(
     {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
       class_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

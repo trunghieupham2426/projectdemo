@@ -12,12 +12,12 @@ const registerClass = async (req, res, next) => {
       );
     }
 
-    const currentRegis = await Regis.create({ class_id, user_id: 2 });
-    const user = await User.findAll({
-      include: [Class],
-    });
+    const currentRegis = await Regis.create({ class_id, user_id });
+    // const user = await User.findAll({
+    //   include: [Class],
+    // });
 
-    res.send(user);
+    res.send(currentRegis);
   } catch (err) {
     console.log(err);
     next(err);
