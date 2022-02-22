@@ -47,10 +47,19 @@ const updateMeSchema = Joi.object({
 });
 
 const classSchema = Joi.object({
-  subject: Joi.string().required(),
-  max_student: Joi.number().required(),
+  subject: Joi.string().empty(),
+  max_student: Joi.number().empty(),
   start_date: Joi.date().required(),
   end_date: Joi.date().required(),
+}).custom((obj, helper) => {
+  const { end_date, start_date } = obj;
+  if (new Date(start_date) > new Date(end_date)) {
+    throw new Error('end_date must be greater than start_date');
+  }
+  if (new Date(start_date) < new Date()) {
+    throw new Error('start_date must be greater than today');
+  }
+  return obj;
 });
 
 exports.classIdValidate = async (req, res, next) => {
@@ -59,7 +68,7 @@ exports.classIdValidate = async (req, res, next) => {
       class_id: Joi.string()
         .required()
         .trim()
-        .empty('')
+        .empty()
         .error(new AppError('class_id is required and not empty', 401)),
     }).validateAsync(req.body);
     next();

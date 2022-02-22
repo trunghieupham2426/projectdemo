@@ -15,6 +15,11 @@ module.exports = (sequelize, Sequelize) => {
         foreignKey: 'class_id',
         otherKey: 'user_id',
       });
+      this.belongsToMany(models.User, {
+        through: 'Class_Users',
+        foreignKey: 'class_id',
+        otherKey: 'user_id',
+      });
     }
   }
   Class.init(
@@ -33,6 +38,9 @@ module.exports = (sequelize, Sequelize) => {
       max_student: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        validate: {
+          notNull: { msg: 'max_student is required' },
+        },
       },
       current_student: {
         type: Sequelize.INTEGER,
@@ -42,6 +50,10 @@ module.exports = (sequelize, Sequelize) => {
       subject: {
         type: Sequelize.STRING,
         allowNull: false,
+        validate: {
+          notNull: { msg: 'subject is required' },
+          notEmpty: { msg: 'subject must not be empty' },
+        },
       },
       start_date: {
         type: Sequelize.DATE,
@@ -49,30 +61,12 @@ module.exports = (sequelize, Sequelize) => {
         get() {
           return moment(this.getDataValue('start_date')).format('DD-MM-YYYY');
         },
-        validate: {
-          compareDate(value) {
-            let input = new Date(value);
-            let current = new Date();
-            if (input < current) {
-              throw new Error(' start_date must be greater than today');
-            }
-          },
-        },
       },
       end_date: {
         type: Sequelize.DATE,
         allowNull: false,
         get() {
           return moment(this.getDataValue('end_date')).format('DD-MM-YYYY');
-        },
-        validate: {
-          compareDate(value) {
-            let input = new Date(value);
-            let start_date = new Date(this.start_date);
-            if (start_date > input) {
-              throw new Error('end_date must be greater than start_date');
-            }
-          },
         },
       },
     },

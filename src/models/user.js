@@ -13,6 +13,11 @@ module.exports = (sequelize, Sequelize) => {
         foreignKey: 'user_id',
         otherKey: 'class_id',
       });
+      this.belongsToMany(models.Class, {
+        through: 'Class_Users',
+        foreignKey: 'user_id',
+        otherKey: 'class_id',
+      });
     }
   }
   User.init(

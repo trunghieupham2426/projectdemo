@@ -10,6 +10,7 @@ const {
   getCalendarClass,
   createClass,
   updateClass,
+  deleteClass,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
@@ -21,7 +22,14 @@ router.post(
   validate.classValidate,
   createClass
 );
-router.patch('/:id', updateClass);
+router.patch(
+  '/:id',
+  auth.protectingRoutes,
+  auth.restrictTo('1'),
+  validate.classValidate,
+  updateClass
+);
+router.delete('/:id', auth.protectingRoutes, auth.restrictTo('1'), deleteClass);
 
 router.get('/calendar/:id', getCalendarClass);
 router.get('/myClass', auth.protectingRoutes, getMyRegisClass);

@@ -10,6 +10,7 @@ module.exports = (sequelize, Sequelize) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Class, { foreignKey: 'class_id' });
+      this.belongsTo(models.User, { foreignKey: 'user_id' });
     }
   }
   Regis.init(

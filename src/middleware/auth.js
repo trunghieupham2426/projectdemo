@@ -20,7 +20,6 @@ exports.protectingRoutes = async (req, res, next) => {
     if (!user) {
       return next(new AppError('this user does not exist', 401));
     }
-    console.log(user);
     req.user = user;
     next();
   } catch (err) {

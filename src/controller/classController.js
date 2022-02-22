@@ -4,7 +4,7 @@ const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
 const Op = Sequelize.Op;
 
-//  for USER
+//  for user and admin
 
 const registerClass = async (req, res, next) => {
   try {
@@ -131,7 +131,8 @@ const getCalendarClass = async (req, res, next) => {
   }
 };
 
-//FOR ADMIN
+//FOR admin only
+
 const createClass = async (req, res, next) => {
   //date mm-dd-yyyy
   try {
@@ -155,8 +156,6 @@ const updateClass = async (req, res, next) => {
   // not finish yet
   try {
     const class_id = req.params.id;
-    const { subject, max_student, start_date, end_date } = req.body;
-
     const currentClass = await Class.findOne({ where: { id: class_id } });
     if (!currentClass) {
       return next(new AppError('No Class found with this id', 404));
@@ -167,7 +166,22 @@ const updateClass = async (req, res, next) => {
     currentClass.save();
     res.send(currentClass);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    next(err);
+  }
+};
+
+const deleteClass = async (req, res, next) => {
+  try {
+    const class_id = req.params.id;
+    const currentClass = await Class.findOne({ where: { id: class_id } });
+    if (!currentClass) {
+      return next(new AppError('No Class found with this id', 404));
+    }
+    await currentClass.destroy();
+    res.send('delete class successfully');
+  } catch (err) {
+    // console.log(err);
     next(err);
   }
 };
@@ -180,4 +194,5 @@ module.exports = {
   getCalendarClass: getCalendarClass,
   createClass: createClass,
   updateClass: updateClass,
+  deleteClass: deleteClass,
 };

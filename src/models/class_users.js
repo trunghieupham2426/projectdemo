@@ -20,12 +20,20 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
       },
       class_id: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Class',
+          key: 'id',
+        },
       },
       user_id: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'User',
+          key: 'id',
+        },
       },
     },
     {
