@@ -20,6 +20,7 @@ exports.protectingRoutes = async (req, res, next) => {
     if (!user) {
       return next(new AppError('this user does not exist', 401));
     }
+    console.log(user);
     req.user = user;
     next();
   } catch (err) {
@@ -34,3 +35,14 @@ exports.loginLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
+
+exports.restrictTo = (role) => {
+  return (req, res, next) => {
+    if (role !== req.user.role) {
+      return next(
+        new AppError('you dont have permission to do this action', 403)
+      );
+    }
+    next();
+  };
+};

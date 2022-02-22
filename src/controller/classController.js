@@ -4,6 +4,8 @@ const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
 const Op = Sequelize.Op;
 
+//  for USER
+
 const registerClass = async (req, res, next) => {
   try {
     const { class_id } = req.body;
@@ -13,7 +15,7 @@ const registerClass = async (req, res, next) => {
       return next(
         new AppError(
           'The class not available or not open at this time , try again later',
-          401
+          404
         )
       );
     }
@@ -115,8 +117,59 @@ const getMyRegisClass = async (req, res, next) => {
 const getCalendarClass = async (req, res, next) => {
   try {
     const class_id = req.params.id;
-    console.log(class_id);
-  } catch (err) {}
+    const currentCLass = await Class.findOne({
+      where: { id: class_id },
+      attributes: ['subject', 'start_date', 'end_date'],
+    });
+    if (!currentCLass) {
+      return next(new AppError('this class does not exist', 404));
+    }
+    res.send(currentCLass);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+//FOR ADMIN
+const createClass = async (req, res, next) => {
+  //date mm-dd-yyyy
+  try {
+    const { subject, max_student, start_date, end_date } = req.body;
+    const newClass = await Class.create({
+      subject,
+      max_student,
+      start_date,
+      end_date,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: newClass,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateClass = async (req, res, next) => {
+  // not finish yet
+  try {
+    const class_id = req.params.id;
+    const { subject, max_student, start_date, end_date } = req.body;
+
+    const currentClass = await Class.findOne({ where: { id: class_id } });
+    if (!currentClass) {
+      return next(new AppError('No Class found with this id', 404));
+    }
+    Object.keys(req.body).map((el) => {
+      currentClass[el] = req.body[el];
+    });
+    currentClass.save();
+    res.send(currentClass);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
 
 module.exports = {
@@ -125,4 +178,6 @@ module.exports = {
   getAllClass: getAllClass,
   getMyRegisClass: getMyRegisClass,
   getCalendarClass: getCalendarClass,
+  createClass: createClass,
+  updateClass: updateClass,
 };

@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const validate = require('./../validate/validateUser');
+const validate = require('./../validate/validate');
 
 const {
   signup,

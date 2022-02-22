@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const phone = Joi.extend(require('joi-phone-number'));
-const AppError = require('./../utils/appError');
+const AppError = require('../utils/appError');
 
 const signUpValidateSchema = Joi.object({
   username: Joi.string()
@@ -47,16 +47,21 @@ const updateMeSchema = Joi.object({
 });
 
 const classSchema = Joi.object({
-  class_id: Joi.string()
-    .required()
-    .trim()
-    .empty('')
-    .error(new AppError('class_id is required and not empty', 401)),
+  subject: Joi.string().required(),
+  max_student: Joi.number().required(),
+  start_date: Joi.date().required(),
+  end_date: Joi.date().required(),
 });
 
-exports.classValidate = async (req, res, next) => {
+exports.classIdValidate = async (req, res, next) => {
   try {
-    await classSchema.validateAsync(req.body);
+    await Joi.object({
+      class_id: Joi.string()
+        .required()
+        .trim()
+        .empty('')
+        .error(new AppError('class_id is required and not empty', 401)),
+    }).validateAsync(req.body);
     next();
   } catch (err) {
     next(err);
@@ -76,6 +81,15 @@ exports.signUpValidate = async (req, res, next) => {
 exports.updateMeValidate = async (req, res, next) => {
   try {
     await updateMeSchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.classValidate = async (req, res, next) => {
+  try {
+    await classSchema.validateAsync(req.body);
     next();
   } catch (err) {
     next(err);

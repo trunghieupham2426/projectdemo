@@ -1,5 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
+var moment = require('moment'); // require
+
 module.exports = (sequelize, Sequelize) => {
   class Class extends Model {
     /**
@@ -44,10 +46,34 @@ module.exports = (sequelize, Sequelize) => {
       start_date: {
         type: Sequelize.DATE,
         allowNull: false,
+        get() {
+          return moment(this.getDataValue('start_date')).format('DD-MM-YYYY');
+        },
+        validate: {
+          compareDate(value) {
+            let input = new Date(value);
+            let current = new Date();
+            if (input < current) {
+              throw new Error(' start_date must be greater than today');
+            }
+          },
+        },
       },
       end_date: {
         type: Sequelize.DATE,
         allowNull: false,
+        get() {
+          return moment(this.getDataValue('end_date')).format('DD-MM-YYYY');
+        },
+        validate: {
+          compareDate(value) {
+            let input = new Date(value);
+            let start_date = new Date(this.start_date);
+            if (start_date > input) {
+              throw new Error('end_date must be greater than start_date');
+            }
+          },
+        },
       },
     },
     {
