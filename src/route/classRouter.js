@@ -6,13 +6,15 @@ const {
   registerClass,
   cancelRegisClass,
   getAllClass,
-  getUserRegisCLass,
+  getMyRegisClass,
+  getCalendarClass,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
 router.get('/', getAllClass);
+router.get('/:id', getCalendarClass);
 router.use(auth.protectingRoutes);
-router.get('/myRegisteredClass', getUserRegisCLass);
+router.get('/myRegisteredClass', getMyRegisClass);
 router.post('/register', validate.classValidate, registerClass);
 router.patch('/cancelRegisClass', validate.classValidate, cancelRegisClass);
 

@@ -1,6 +1,8 @@
+const Sequelize = require('sequelize');
 const { Class, User, Regis } = require('./../models');
 const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
+const Op = Sequelize.Op;
 
 const registerClass = async (req, res, next) => {
   try {
@@ -74,31 +76,53 @@ const getAllClass = async (req, res, next) => {
     const allClass = await Class.findAll();
     res.send(allClass);
   } catch (err) {
-    // console.log(err);
+    // console.log(err);s
     next(err);
   }
 };
 
-const getUserRegisCLass = async (req, res, next) => {
-  //not finished yet
+const getMyRegisClass = async (req, res, next) => {
   //127.0.0.1:5000/api/classes/myRegisteredClass?status=pending,active,cancel
   try {
-    console.log(req.query.status.split(','));
+    const defaultFilter = ['pending', 'active', 'cancel'];
+    let userFilter = req.query.status?.split(',');
+    if (!userFilter) {
+      userFilter = defaultFilter;
+    }
     const user_id = req.user.id;
     const myClass = await Regis.findAll({
-      where: { user_id: user_id },
-      include: [Class],
+      where: {
+        user_id: user_id,
+        status: {
+          [Op.in]: userFilter,
+        },
+      },
+      include: {
+        model: Class,
+      },
     });
-    res.send(myClass);
+
+    res.status(200).json({
+      status: 'success',
+      data: myClass,
+    });
   } catch (err) {
     console.log(err);
     next(err);
   }
 };
 
+const getCalendarClass = async (req, res, next) => {
+  try {
+    const class_id = req.params.id;
+    console.log(class_id);
+  } catch (err) {}
+};
+
 module.exports = {
   registerClass: registerClass,
   cancelRegisClass: cancelRegisClass,
   getAllClass: getAllClass,
-  getUserRegisCLass: getUserRegisCLass,
+  getMyRegisClass: getMyRegisClass,
+  getCalendarClass: getCalendarClass,
 };
