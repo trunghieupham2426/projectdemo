@@ -15,11 +15,6 @@ module.exports = (sequelize, Sequelize) => {
         foreignKey: 'class_id',
         otherKey: 'user_id',
       });
-      this.belongsToMany(models.User, {
-        through: 'Class_Users',
-        foreignKey: 'class_id',
-        otherKey: 'user_id',
-      });
     }
   }
   Class.init(

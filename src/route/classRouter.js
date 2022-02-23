@@ -12,8 +12,11 @@ const {
   updateClass,
   deleteClass,
   submitClassRegistration,
+  getListRegisterClass,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
+
+//admin
 
 router.get('/', getAllClass);
 router.post(
@@ -42,6 +45,15 @@ router.put(
   auth.checkRole('admin'),
   submitClassRegistration
 );
+
+router.get(
+  '/listRegistered',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  getListRegisterClass
+);
+
+//user - admin
 
 router.get('/calendar/:id', getCalendarClass);
 router.get('/myClass', auth.protectingRoutes, getMyRegisClass);

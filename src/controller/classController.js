@@ -154,7 +154,6 @@ const createClass = async (req, res, next) => {
 };
 
 const updateClass = async (req, res, next) => {
-  // not finish yet
   try {
     const class_id = req.params.id;
     const currentClass = await Class.findOne({ where: { id: class_id } });
@@ -191,31 +190,83 @@ const submitClassRegistration = async (req, res, next) => {
   try {
     const { action, class_id, user_id } = req.body;
     const currentRegis = await Regis.findOne({
-      where: { class_id: class_id, user_id: user_id },
-      include: {
-        model: User,
-        attributes: ['email'],
-      },
+      where: { class_id: class_id, user_id: user_id, status: 'pending' },
+      include: [
+        {
+          model: User,
+          attributes: ['email'],
+        },
+      ],
     });
     const currentClass = await Class.findOne({ where: { id: class_id } });
     if (!currentRegis) {
-      return next(new AppError('No Class founded', 404));
+      return next(new AppError('No register class founded', 404));
     }
     const userEmail = currentRegis.User.email;
+    const maxStudent = currentClass.max_student;
+    const currentStudent = currentClass.current_student;
     if (action === 'accept') {
+      if (currentClass.status === 'close') {
+        return next(new AppError('the class is close , can not accept', 403));
+      }
       currentRegis.adm_action = action;
       currentRegis.status = 'active';
       currentClass.current_student++;
+      if (maxStudent - currentStudent === 1) {
+        currentClass.status = 'close';
+      }
       await Class_Users.create({ class_id, user_id });
       currentRegis.save();
       currentClass.save();
+      helperFn.sendEmail(
+        userEmail,
+        'Congratulation',
+        'Congratulation , your registered class has been accepted'
+      );
+    }
+    if (action === 'reject') {
+      currentRegis.adm_action = action;
+      currentRegis.status = 'cancel';
+      currentRegis.save();
+      currentClass.save();
+      helperFn.sendEmail(
+        userEmail,
+        'Cancel Class',
+        'Your registered class has been cancel'
+      );
     }
 
-    res.send(currentRegis);
+    res.send('your action successfully');
   } catch (err) {
     console.log(err);
     next(err);
   }
+};
+
+const getListRegisterClass = async (req, res, next) => {
+  //127.0.0.1:5000/api/classes/listRegistered?action=reject,accept
+  try {
+    let listRegis;
+    if (req.query.action) {
+      const defaultFilter = ['accept', 'reject'];
+      let userFilter = req.query.action?.split(',');
+      if (!userFilter) {
+        userFilter = defaultFilter;
+      }
+      console.log(userFilter);
+      listRegis = await Regis.findAll({
+        where: {
+          adm_action: {
+            [Op.in]: userFilter,
+          },
+        },
+      });
+    } else {
+      listRegis = await Regis.findAll();
+    }
+
+    res.send(listRegis);
+  } catch (err) {}
 };
 
 module.exports = {
@@ -228,4 +279,5 @@ module.exports = {
   updateClass: updateClass,
   deleteClass: deleteClass,
   submitClassRegistration: submitClassRegistration,
+  getListRegisterClass: getListRegisterClass,
 };
