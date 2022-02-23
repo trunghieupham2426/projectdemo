@@ -35,7 +35,9 @@ exports.loginLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-exports.restrictTo = (role) => {
+exports.checkRole = (role) => {
+  if (role === 'admin') role = '1';
+  else role = '0';
   return (req, res, next) => {
     if (role !== req.user.role) {
       return next(

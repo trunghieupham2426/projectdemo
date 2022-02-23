@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
       },
       adm_action: {
-        type: Sequelize.ENUM('active', 'reject'),
+        type: Sequelize.ENUM('accept', 'reject'),
       },
     },
     {

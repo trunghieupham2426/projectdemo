@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { Class, User, Regis } = require('./../models');
+const { Class, User, Regis, Class_Users } = require('./../models');
 const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
 const Op = Sequelize.Op;
@@ -54,9 +54,10 @@ const registerClass = async (req, res, next) => {
 
 const cancelRegisClass = async (req, res, next) => {
   try {
-    const { class_id } = req.body;
+    const class_id = req.params.id;
+    const user_id = req.user.id;
     const cancelClass = await Regis.findOne({
-      where: { class_id: class_id, status: 'pending' },
+      where: { class_id: class_id, user_id: user_id, status: 'pending' },
     });
     if (!cancelClass) {
       return next(new AppError(`can not cancel this class`, 401));
@@ -186,6 +187,37 @@ const deleteClass = async (req, res, next) => {
   }
 };
 
+const submitClassRegistration = async (req, res, next) => {
+  try {
+    const { action, class_id, user_id } = req.body;
+    const currentRegis = await Regis.findOne({
+      where: { class_id: class_id, user_id: user_id },
+      include: {
+        model: User,
+        attributes: ['email'],
+      },
+    });
+    const currentClass = await Class.findOne({ where: { id: class_id } });
+    if (!currentRegis) {
+      return next(new AppError('No Class founded', 404));
+    }
+    const userEmail = currentRegis.User.email;
+    if (action === 'accept') {
+      currentRegis.adm_action = action;
+      currentRegis.status = 'active';
+      currentClass.current_student++;
+      await Class_Users.create({ class_id, user_id });
+      currentRegis.save();
+      currentClass.save();
+    }
+
+    res.send(currentRegis);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 module.exports = {
   registerClass: registerClass,
   cancelRegisClass: cancelRegisClass,
@@ -195,4 +227,5 @@ module.exports = {
   createClass: createClass,
   updateClass: updateClass,
   deleteClass: deleteClass,
+  submitClassRegistration: submitClassRegistration,
 };

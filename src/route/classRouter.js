@@ -11,6 +11,7 @@ const {
   createClass,
   updateClass,
   deleteClass,
+  submitClassRegistration,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
@@ -18,18 +19,29 @@ router.get('/', getAllClass);
 router.post(
   '/',
   auth.protectingRoutes,
-  auth.restrictTo('1'), // "1" = admin , "0" = user
+  auth.checkRole('admin'),
   validate.classValidate,
   createClass
 );
 router.patch(
   '/:id',
   auth.protectingRoutes,
-  auth.restrictTo('1'),
+  auth.checkRole('admin'),
   validate.classValidate,
   updateClass
 );
-router.delete('/:id', auth.protectingRoutes, auth.restrictTo('1'), deleteClass);
+router.delete(
+  '/:id',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  deleteClass
+);
+router.put(
+  '/admin/submit',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  submitClassRegistration
+);
 
 router.get('/calendar/:id', getCalendarClass);
 router.get('/myClass', auth.protectingRoutes, getMyRegisClass);
@@ -39,11 +51,6 @@ router.post(
   validate.classIdValidate,
   registerClass
 );
-router.patch(
-  '/cancel',
-  auth.protectingRoutes,
-  validate.classIdValidate,
-  cancelRegisClass
-);
+router.patch('/:id/cancel', auth.protectingRoutes, cancelRegisClass);
 
 module.exports = router;

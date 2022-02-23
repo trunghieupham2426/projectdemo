@@ -51,6 +51,7 @@ const classSchema = Joi.object({
   max_student: Joi.number().empty(),
   start_date: Joi.date().required(),
   end_date: Joi.date().required(),
+  status: Joi.string().valid('open', 'close').default('open'),
 }).custom((obj, helper) => {
   const { end_date, start_date } = obj;
   if (new Date(start_date) > new Date(end_date)) {
