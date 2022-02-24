@@ -188,6 +188,8 @@ const deleteClass = async (req, res, next) => {
 
 const submitClassRegistration = async (req, res, next) => {
   const t = await sequelize.transaction();
+  const accept = 'accept';
+  const reject = 'reject';
   try {
     const { action, class_id, user_id } = req.body;
     const currentRegis = await Regis.findOne({
@@ -205,18 +207,16 @@ const submitClassRegistration = async (req, res, next) => {
     if (!currentRegis) {
       return next(new AppError('No register class founded', 404));
     }
-    if (currentClass.status === 'close') {
-      return next(
-        new AppError(
-          'the class is close , can not accept or reject at this time',
-          404
-        )
-      );
-    }
     const userEmail = currentRegis.User.email;
     const maxStudent = currentClass.max_student;
     const currentStudent = currentClass.current_student;
-    if (action === 'accept') {
+    if (action === accept) {
+      if (currentClass.status === 'close') {
+        // khi lop close thi ko accept dc , nhung van reject duoc
+        return next(
+          new AppError('the class is close , can not accept at this time', 404)
+        );
+      }
       await currentRegis.update(
         {
           adm_action: action,
@@ -224,33 +224,40 @@ const submitClassRegistration = async (req, res, next) => {
         },
         { transaction: t }
       );
-      // currentRegis.adm_action = action;
-      // currentRegis.status = 'active';
-      await currentClass.increment('current_student');
-      if (maxStudent - currentStudent === 1) currentClass.status = 'close';
-      await Class_Users.create({ class_id, user_id });
-      // currentRegis.save();
-      currentClass.save();
+      await currentClass.increment('current_student', { transaction: t });
+      if (maxStudent - currentStudent === 1) {
+        await currentClass.update(
+          {
+            status: 'close',
+          },
+          { transaction: t }
+        );
+      }
+      await Class_Users.create({ class_id, user_id }, { transaction: t });
       helperFn.sendEmail(
         userEmail,
         'Congratulation',
         'Congratulation , your registered class has been accepted'
       );
-      await t.commit();
     }
-    if (action === 'reject') {
-      currentRegis.adm_action = action;
-      currentRegis.status = 'cancel';
-      currentRegis.save();
-      currentClass.save();
+    if (action === reject) {
+      await currentRegis.update(
+        {
+          adm_action: action,
+          status: 'cancel',
+        },
+        { transaction: t }
+      );
       helperFn.sendEmail(
         userEmail,
         'Cancel Class',
         'Your registered class has been cancel'
       );
     }
+    await t.commit();
     res.send('your action successfully');
   } catch (err) {
+    await t.rollback();
     next(err);
   }
 };
@@ -276,10 +283,41 @@ const getListRegisterClass = async (req, res, next) => {
     } else {
       listRegis = await Regis.findAll();
     }
-
     res.send(listRegis);
   } catch (err) {
     console.log(err);
+    next(err);
+  }
+};
+
+const viewUserInClass = async (req, res, next) => {
+  try {
+    const class_id = req.params.id;
+    const users = [];
+    let data = JSON.parse(
+      JSON.stringify(
+        await Class_Users.findAll({
+          where: { class_id: class_id },
+          include: {
+            model: User,
+            attributes: ['email', 'username', 'age', 'phone'],
+          },
+        }),
+        null,
+        2
+      )
+    );
+    if (data.length === 0) {
+      return next(new AppError('No students for this class', 404));
+    }
+    data.map((el) => {
+      users.push(el.User);
+    });
+    res.status(200).json({
+      status: 'success',
+      data: users,
+    });
+  } catch (err) {
     next(err);
   }
 };
@@ -295,4 +333,5 @@ module.exports = {
   deleteClass: deleteClass,
   submitClassRegistration: submitClassRegistration,
   getListRegisterClass: getListRegisterClass,
+  viewUserInClass: viewUserInClass,
 };

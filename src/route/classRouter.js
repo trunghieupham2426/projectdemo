@@ -13,6 +13,7 @@ const {
   deleteClass,
   submitClassRegistration,
   getListRegisterClass,
+  viewUserInClass,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
@@ -51,6 +52,13 @@ router.get(
   auth.protectingRoutes,
   auth.checkRole('admin'),
   getListRegisterClass
+);
+
+router.get(
+  '/viewUser/:id',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  viewUserInClass
 );
 
 //user - admin

@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const userRouter = require('./src/route/userRouter');
 const classRouter = require('./src/route/classRouter');
-const { sequelize } = require('./src/models');
+const { sequelize, User, Class_Users, Class, Regis } = require('./src/models');
 
 // middleware
 app.use(express.json({ limit: '50mb' })); //body parser
