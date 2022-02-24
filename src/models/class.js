@@ -54,14 +54,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
         get() {
-          return moment(this.getDataValue('start_date')).format('DD-MM-YYYY');
+          return moment(this.getDataValue('start_date')).format('YYYY-MM-DD');
         },
       },
       end_date: {
         type: Sequelize.DATE,
         allowNull: false,
         get() {
-          return moment(this.getDataValue('end_date')).format('DD-MM-YYYY');
+          return moment(this.getDataValue('end_date')).format('YYYY-MM-DD');
         },
       },
     },

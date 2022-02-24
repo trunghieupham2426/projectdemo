@@ -1,10 +1,15 @@
 require('dotenv').config();
 const express = require('express');
+const cron = require('node-cron');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const userRouter = require('./src/route/userRouter');
 const classRouter = require('./src/route/classRouter');
-const { sequelize, User, Class_Users, Class, Regis } = require('./src/models');
+const { sequelize } = require('./src/models');
+const reminder = require('./src/utils/reminder');
+
+// reminder
+cron.schedule('0 0 * * *', reminder); // run at 0h00 every day
 
 // middleware
 app.use(express.json({ limit: '50mb' })); //body parser
