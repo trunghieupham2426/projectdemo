@@ -34,6 +34,13 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      calendar_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Calendars',
+          key: 'id',
+        },
+      },
       createdAt: {
         field: 'created_at',
         type: Sequelize.DATE,

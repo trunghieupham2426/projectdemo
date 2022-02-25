@@ -1,5 +1,12 @@
 const Sequelize = require('sequelize');
-const { Class, User, Regis, Class_Users, sequelize } = require('./../models');
+const {
+  Class,
+  User,
+  Regis,
+  Class_Users,
+  sequelize,
+  Calendar,
+} = require('./../models');
 const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
 const Op = Sequelize.Op;
@@ -121,6 +128,7 @@ const getCalendarClass = async (req, res, next) => {
     const currentCLass = await Class.findOne({
       where: { id: class_id },
       attributes: ['subject', 'start_date', 'end_date'],
+      include: [Calendar],
     });
     if (!currentCLass) {
       return next(new AppError('this class does not exist', 404));

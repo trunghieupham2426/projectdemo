@@ -15,6 +15,7 @@ module.exports = (sequelize, Sequelize) => {
         foreignKey: 'class_id',
         otherKey: 'user_id',
       });
+      this.belongsTo(models.Calendar, { foreignKey: 'calendar_id' });
     }
   }
   Class.init(
@@ -62,6 +63,13 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         get() {
           return moment(this.getDataValue('end_date')).format('YYYY-MM-DD');
+        },
+      },
+      calendar_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Calendars',
+          key: 'id',
         },
       },
     },
