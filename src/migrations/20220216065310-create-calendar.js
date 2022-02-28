@@ -10,6 +10,15 @@ module.exports = {
       },
       days_of_week: {
         type: Sequelize.STRING,
+        allowNull: false,
+      },
+      open_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
+      },
+      close_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
       },
     });
   },

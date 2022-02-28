@@ -124,7 +124,10 @@ const getMyRegisClass = async (req, res, next) => {
 
 const getCalendarClass = async (req, res, next) => {
   try {
-    const class_id = req.params.id;
+    const class_id = req.query.class;
+    if (!class_id) {
+      return next(new AppError('please provide class id', 404));
+    }
     const currentCLass = await Class.findOne({
       where: { id: class_id },
       attributes: ['subject', 'start_date', 'end_date'],
@@ -190,6 +193,41 @@ const deleteClass = async (req, res, next) => {
     res.send('delete class successfully');
   } catch (err) {
     // console.log(err);
+    next(err);
+  }
+};
+const createCalendar = async (req, res, next) => {
+  try {
+    const { days_of_week, open_time, close_time } = req.body;
+    const calendar = await Calendar.create({
+      days_of_week,
+      open_time,
+      close_time,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: calendar,
+    });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+const updateCalendar = async (req, res, next) => {
+  try {
+    const calendar_id = req.params.id;
+    const currentCalendar = await Calendar.findOne({
+      where: { id: calendar_id },
+    });
+    if (!currentCalendar) {
+      return next(new AppError('No calendar found with this id', 404));
+    }
+    Object.keys(req.body).map((el) => {
+      currentCalendar[el] = req.body[el];
+    });
+    currentCalendar.save();
+    res.send(currentCalendar);
+  } catch (err) {
     next(err);
   }
 };
@@ -342,4 +380,6 @@ module.exports = {
   submitClassRegistration: submitClassRegistration,
   getListRegisterClass: getListRegisterClass,
   viewUserInClass: viewUserInClass,
+  createCalendar: createCalendar,
+  updateCalendar: updateCalendar,
 };

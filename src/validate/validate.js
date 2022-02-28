@@ -63,6 +63,23 @@ const classSchema = Joi.object({
   return obj;
 });
 
+const calendarSchema = Joi.object({
+  days_of_week: Joi.string().empty(),
+  open_time: Joi.string()
+    .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+    .empty(),
+  close_time: Joi.string()
+    .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+    .error(new Error('invalid time , please use this format HH:MM'))
+    .empty()
+    .error(new Error('invalid time, please use this format HH:MM')),
+}).custom((obj, helper) => {
+  const { open_time, close_time } = obj;
+  if (close_time < open_time) {
+    throw new Error('close_time must greater than open_time');
+  }
+});
+
 exports.classIdValidate = async (req, res, next) => {
   try {
     await Joi.object({
@@ -81,7 +98,15 @@ exports.classIdValidate = async (req, res, next) => {
 exports.signUpValidate = async (req, res, next) => {
   try {
     await signUpValidateSchema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
 
+exports.calendarValidate = async (req, res, next) => {
+  try {
+    await calendarSchema.validateAsync(req.body);
     next();
   } catch (err) {
     next(err);

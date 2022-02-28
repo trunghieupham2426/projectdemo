@@ -14,6 +14,8 @@ const {
   submitClassRegistration,
   getListRegisterClass,
   viewUserInClass,
+  createCalendar,
+  updateCalendar,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
@@ -61,9 +63,24 @@ router.get(
   viewUserInClass
 );
 
+router.post(
+  '/calendar',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  validate.calendarValidate,
+  createCalendar
+);
+router.patch(
+  '/calendar/:id',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  validate.calendarValidate,
+  updateCalendar
+);
+
 //user - admin
 
-router.get('/calendar/:id', getCalendarClass);
+router.get('/calendar', getCalendarClass);
 router.get('/myClass', auth.protectingRoutes, getMyRegisClass);
 router.post(
   '/register',

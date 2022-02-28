@@ -20,7 +20,24 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      days_of_week: Sequelize.STRING,
+      days_of_week: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      open_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
+        // validate: {
+        //   isSmallerThanCloseTime(value) {
+        //     if (value > this.close_time)
+        //       throw new Error('open_time must be smaller than close_time');
+        //   },
+        // },
+      },
+      close_time: {
+        type: Sequelize.TIME,
+        allowNull: false,
+      },
     },
     {
       sequelize,
