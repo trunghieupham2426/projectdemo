@@ -9,7 +9,11 @@ module.exports = (sequelize, Sequelize) => {
      */
     static associate(models) {
       // define association here
-      this.hasMany(models.Class);
+      this.belongsToMany(models.Class, {
+        through: 'Class_Calendar',
+        foreignKey: 'calendar_id',
+        otherKey: 'class_id',
+      });
     }
   }
   Calendar.init(
@@ -20,7 +24,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      days_of_week: {
+      day_of_week: {
         type: Sequelize.STRING,
         allowNull: false,
       },

@@ -6,6 +6,7 @@ const {
   Class_Users,
   sequelize,
   Calendar,
+  Class_Calendar,
 } = require('./../models');
 const AppError = require('./../utils/appError');
 const helperFn = require('./../utils/helperFn');
@@ -18,7 +19,7 @@ const registerClass = async (req, res, next) => {
     const { class_id } = req.body;
     const user_id = req.user.id;
     const currentClass = await Class.findOne({ where: { id: class_id } });
-    if (!currentClass || currentClass.status === 'close') {
+    if (!currentClass || currentClass.status !== 'open') {
       return next(
         new AppError(
           'The class not available or not open at this time , try again later',
@@ -26,21 +27,18 @@ const registerClass = async (req, res, next) => {
         )
       );
     }
-    const currentUser = JSON.stringify(
-      await User.findOne({
-        where: { id: user_id },
-        include: [Class],
-      }),
-      null,
-      2
-    );
-
-    const listClassIdOfUser = JSON.parse(currentUser).Classes.map((el) => {
-      return el.id;
+    const currentUser = await User.findAll({
+      where: { id: user_id },
+      include: [Class],
+      raw: true,
+      nest: true,
+    });
+    const listClassIdOfUser = currentUser.map((el) => {
+      return el.Classes.id;
     });
 
     if (listClassIdOfUser.includes(+class_id)) {
-      return next(new AppError('you  already register this class', 401));
+      return next(new AppError('you  already register this class', 400));
     }
     await Regis.create({ class_id, user_id });
 
@@ -54,7 +52,7 @@ const registerClass = async (req, res, next) => {
       message: 'please check your email for more information',
     });
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     next(err);
   }
 };
@@ -67,7 +65,9 @@ const cancelRegisClass = async (req, res, next) => {
       where: { class_id: class_id, user_id: user_id, status: 'pending' },
     });
     if (!cancelClass) {
-      return next(new AppError(`can not cancel this class`, 401));
+      return next(
+        new AppError(`this class already cancel or not registered`, 400)
+      );
     }
     cancelClass.status = 'cancel';
     cancelClass.save();
@@ -82,11 +82,33 @@ const cancelRegisClass = async (req, res, next) => {
 };
 
 const getAllClass = async (req, res, next) => {
+  //127.0.0.1:5000/api/classes?status=open
   try {
-    const allClass = await Class.findAll();
-    res.send(allClass);
+    let statusFilter = ['open'];
+    if (req.query.status) {
+      statusFilter = req.query.status.split(',');
+    }
+    const objFilter = {
+      status: {
+        [Op.in]: statusFilter,
+      },
+    };
+    const allClass = await Class.findAll({
+      where: objFilter,
+      include: {
+        model: Calendar,
+        through: {
+          attributes: [],
+        },
+      },
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: allClass,
+    });
   } catch (err) {
-    // console.log(err);s
+    // console.log(err);
     next(err);
   }
 };
@@ -126,12 +148,18 @@ const getCalendarClass = async (req, res, next) => {
   try {
     const class_id = req.query.class;
     if (!class_id) {
-      return next(new AppError('please provide class id', 404));
+      return next(new AppError('please provide class id', 400));
     }
     const currentCLass = await Class.findOne({
       where: { id: class_id },
       attributes: ['subject', 'start_date', 'end_date'],
-      include: [Calendar],
+      include: {
+        model: Calendar,
+        attributes: ['day_of_week', 'open_time', 'close_time'],
+        through: {
+          attributes: [], // dont get data from junction table
+        },
+      },
     });
     if (!currentCLass) {
       return next(new AppError('this class does not exist', 404));
@@ -164,6 +192,47 @@ const createClass = async (req, res, next) => {
   }
 };
 
+const assignCalendarForClass = async (req, res, next) => {
+  try {
+    const { class_id, calendar_id } = req.body;
+    const calendarOfClass = await Class.findAll({
+      where: { id: class_id },
+      attributes: [],
+      include: {
+        model: Calendar,
+        attributes: ['id'],
+        through: {
+          attributes: [],
+        },
+      },
+      raw: true,
+      nest: true,
+    });
+    const currentCalendar = await Calendar.findOne({
+      where: { id: calendar_id },
+    });
+    if (!calendarOfClass || !currentCalendar) {
+      return next(new AppError('class or calendar not available ', 404));
+    }
+    const listClassCalendarId = calendarOfClass.map((el) => el.Calendars.id);
+    if (listClassCalendarId.includes(+calendar_id)) {
+      return next(new AppError('already assign this calendar for class', 400));
+    }
+    // update status of Class from 'pending' to 'open' when assign calendar
+    const currentClass = await Class.findOne({ where: { id: class_id } });
+    await currentClass.update({ status: 'open' });
+    //insert data to class_calendars table
+    await Class_Calendar.create({ class_id, calendar_id });
+    res.status(200).json({
+      status: 'success',
+      message: 'your action successfully',
+    });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 const updateClass = async (req, res, next) => {
   try {
     const class_id = req.params.id;
@@ -171,11 +240,12 @@ const updateClass = async (req, res, next) => {
     if (!currentClass) {
       return next(new AppError('No Class found with this id', 404));
     }
-    Object.keys(req.body).map((el) => {
-      currentClass[el] = req.body[el];
-    });
+    Object.assign(currentClass, req.body);
     currentClass.save();
-    res.send(currentClass);
+    res.status(200).json({
+      status: 'success',
+      data: currentClass,
+    });
   } catch (err) {
     // console.log(err);
     next(err);
@@ -198,9 +268,9 @@ const deleteClass = async (req, res, next) => {
 };
 const createCalendar = async (req, res, next) => {
   try {
-    const { days_of_week, open_time, close_time } = req.body;
+    const { day_of_week, open_time, close_time } = req.body;
     const calendar = await Calendar.create({
-      days_of_week,
+      day_of_week,
       open_time,
       close_time,
     });
@@ -340,19 +410,16 @@ const viewUserInClass = async (req, res, next) => {
   try {
     const class_id = req.params.id;
     const users = [];
-    let data = JSON.parse(
-      JSON.stringify(
-        await Class_Users.findAll({
-          where: { class_id: class_id },
-          include: {
-            model: User,
-            attributes: ['email', 'username', 'age', 'phone'],
-          },
-        }),
-        null,
-        2
-      )
-    );
+    let data = await Class_Users.findAll({
+      where: { class_id: class_id },
+      include: {
+        model: User,
+        attributes: ['email', 'username', 'age', 'phone'],
+      },
+      raw: true,
+      nest: true,
+    });
+
     if (data.length === 0) {
       return next(new AppError('No students for this class', 404));
     }
@@ -382,4 +449,5 @@ module.exports = {
   viewUserInClass: viewUserInClass,
   createCalendar: createCalendar,
   updateCalendar: updateCalendar,
+  assignCalendarForClass: assignCalendarForClass,
 };

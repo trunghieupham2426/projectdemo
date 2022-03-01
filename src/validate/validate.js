@@ -12,13 +12,13 @@ const signUpValidateSchema = Joi.object({
       errors.forEach((err) => {
         switch (err.code) {
           case 'string.empty':
-            err.message = 'Value should not be empty!';
+            err.message = 'username should not be empty!';
             break;
           case 'string.min':
-            err.message = `Value should have at least ${err.local.limit} characters!`;
+            err.message = `username should have at least ${err.local.limit} characters!`;
             break;
           case 'string.max':
-            err.message = `Value should have at most ${err.local.limit} characters!`;
+            err.message = `username should have at most ${err.local.limit} characters!`;
             break;
           default:
             break;
@@ -28,10 +28,7 @@ const signUpValidateSchema = Joi.object({
       return errors;
     }),
 
-  password: Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]{6,30}$'))
-
-    .required(),
+  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
@@ -42,16 +39,16 @@ const signUpValidateSchema = Joi.object({
 });
 
 const updateMeSchema = Joi.object({
-  phone: phone.string().phoneNumber().required(),
-  age: Joi.number().min(1).max(100),
+  phone: phone.string().phoneNumber().empty(),
+  age: Joi.number().min(1).max(100).empty(),
 });
 
 const classSchema = Joi.object({
   subject: Joi.string().empty(),
   max_student: Joi.number().empty(),
-  start_date: Joi.date().required(),
-  end_date: Joi.date().required(),
-  status: Joi.string().valid('open', 'close').default('open'),
+  start_date: Joi.date(),
+  end_date: Joi.date(),
+  status: Joi.string().valid('open', 'close', 'pending').default('pending'),
 }).custom((obj, helper) => {
   const { end_date, start_date } = obj;
   if (new Date(start_date) > new Date(end_date)) {
@@ -64,7 +61,7 @@ const classSchema = Joi.object({
 });
 
 const calendarSchema = Joi.object({
-  days_of_week: Joi.string().empty(),
+  day_of_week: Joi.string().empty(),
   open_time: Joi.string()
     .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
     .empty(),

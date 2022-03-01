@@ -15,7 +15,11 @@ module.exports = (sequelize, Sequelize) => {
         foreignKey: 'class_id',
         otherKey: 'user_id',
       });
-      this.belongsTo(models.Calendar, { foreignKey: 'calendar_id' });
+      this.belongsToMany(models.Calendar, {
+        through: 'Class_Calendar',
+        foreignKey: 'class_id',
+        otherKey: 'calendar_id',
+      });
     }
   }
   Class.init(
@@ -27,8 +31,8 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
       },
       status: {
-        type: Sequelize.ENUM('open', 'close'),
-        defaultValue: 'open',
+        type: Sequelize.ENUM('open', 'close', 'pending'),
+        defaultValue: 'pending',
         allowNull: false,
       },
       max_student: {
@@ -63,13 +67,6 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         get() {
           return moment(this.getDataValue('end_date')).format('YYYY-MM-DD');
-        },
-      },
-      calendar_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Calendars',
-          key: 'id',
         },
       },
     },
