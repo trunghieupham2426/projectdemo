@@ -9,6 +9,8 @@ module.exports = (sequelize, Sequelize) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Class, { foreignKey: 'class_id' });
+      this.belongsTo(models.Calendar, { foreignKey: 'calendar_id' });
     }
   }
   Class_Calendar.init(

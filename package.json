@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server.js",
+    "test": "jest --runInBand --force-exit"
   },
   "author": "hieupham",
   "license": "ISC",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
+    "cross-env": "^7.0.3",
     "jest": "^27.5.1",
     "supertest": "^6.2.2"
   }
