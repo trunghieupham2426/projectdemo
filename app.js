@@ -9,7 +9,7 @@ const { sequelize } = require('./src/models');
 const reminder = require('./src/utils/reminder');
 
 // reminder
-// cron.schedule('0 0 * * *', reminder); // run at 0h00 every day
+cron.schedule('0 0 * * *', reminder); // run at 0h00 every day
 
 // middleware
 app.use(express.json({ limit: '50mb' })); //body parser
