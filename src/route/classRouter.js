@@ -16,6 +16,7 @@ const {
   viewUserInClass,
   createCalendar,
   updateCalendar,
+  assignCalendarForClass,
 } = require('./../controller/classController');
 const auth = require('../middleware/auth');
 
@@ -69,6 +70,12 @@ router.post(
   auth.checkRole('admin'),
   validate.calendarValidate,
   createCalendar
+);
+router.post(
+  '/classCalendar',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  assignCalendarForClass
 );
 router.patch(
   '/calendar/:id',

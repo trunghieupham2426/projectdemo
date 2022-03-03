@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      days_of_week: {
+      day_of_week: {
         type: Sequelize.STRING,
         allowNull: false,
       },

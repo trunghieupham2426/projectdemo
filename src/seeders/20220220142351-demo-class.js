@@ -9,7 +9,6 @@ module.exports = {
         subject: 'HTML',
         start_date: '2022-02-25',
         end_date: '2022-05-25',
-        calendar_id: '1',
       },
       {
         max_student: 2,
@@ -17,7 +16,6 @@ module.exports = {
         subject: 'CSS',
         start_date: '2022-03-01',
         end_date: '2022-06-01',
-        calendar_id: '2',
       },
       {
         max_student: 2,
@@ -25,7 +23,6 @@ module.exports = {
         subject: 'JAVA',
         start_date: '2022-02-15',
         end_date: '2022-05-15',
-        calendar_id: '3',
       },
       {
         max_student: 1,
@@ -33,7 +30,6 @@ module.exports = {
         subject: 'RUBY',
         start_date: '2022-02-27',
         end_date: '2022-05-27',
-        calendar_id: '4',
       },
     ]);
   },

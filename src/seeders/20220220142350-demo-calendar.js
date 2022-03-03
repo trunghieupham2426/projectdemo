@@ -4,27 +4,37 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.bulkInsert('Calendars', [
       {
-        days_of_week: '2,4,6',
+        day_of_week: 'mon',
         open_time: '8:00',
         close_time: '10:00',
       },
       {
-        days_of_week: '3,5,7',
+        day_of_week: 'tue',
         open_time: '12:00',
         close_time: '15:30',
       },
       {
-        days_of_week: '2,3,5',
+        day_of_week: 'wed',
         open_time: '9:30',
         close_time: '12:45',
       },
       {
-        days_of_week: '2,4,7',
+        day_of_week: 'thur',
         open_time: '8:37',
         close_time: '10:49',
       },
       {
-        days_of_week: '3,4,5',
+        day_of_week: 'fri',
+        open_time: '15:30',
+        close_time: '18:00',
+      },
+      {
+        day_of_week: 'sat',
+        open_time: '15:30',
+        close_time: '18:00',
+      },
+      {
+        day_of_week: 'mon',
         open_time: '15:30',
         close_time: '18:00',
       },

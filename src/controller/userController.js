@@ -42,12 +42,15 @@ const updatePassword = async (req, res, next) => {
     });
     const checkPwd = await helperFn.comparePassword(oldPwd, user.password);
     if (!checkPwd) {
-      return next(new AppError('please insert correct old password', 400));
+      return next(new AppError('please insert correct old password', 401));
     }
     const hashPWD = await bcrypt.hash(newPwd, 8);
     user.password = hashPWD;
     user.save();
-    res.send('password updated');
+    res.status(200).json({
+      status: 'success',
+      message: 'password updated',
+    });
   } catch (err) {
     next(err);
   }
@@ -77,7 +80,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const errMsg = err?.errors ? err.errors[0].message : undefined;
     if (errMsg) {
-      return next(new AppError(errMsg, 401));
+      return next(new AppError(errMsg, 400));
     }
     next(err);
   }
@@ -108,7 +111,7 @@ const login = async (req, res, next) => {
     if (!isCorrect) {
       user.countLogin++;
       user.save();
-      return next(new AppError('invalid password', 400));
+      return next(new AppError('your password not correct', 400));
     }
 
     const token = helperFn.generaToken({ id: user.id, role: user.role }, '1d');

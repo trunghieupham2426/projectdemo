@@ -9,8 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       status: {
-        type: Sequelize.ENUM('open', 'close'),
-        defaultValue: 'open',
+        type: Sequelize.ENUM('open', 'close', 'pending'),
+        defaultValue: 'pending',
         allowNull: false,
       },
       max_student: {
@@ -33,23 +33,6 @@ module.exports = {
       end_date: {
         type: Sequelize.DATE,
         allowNull: false,
-      },
-      calendar_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Calendars',
-          key: 'id',
-        },
-      },
-      createdAt: {
-        field: 'created_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
-      },
-      updatedAt: {
-        field: 'updated_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
       },
     });
   },

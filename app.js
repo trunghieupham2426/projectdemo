@@ -2,10 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cron = require('node-cron');
 const app = express();
-const PORT = process.env.PORT || 3000;
 const userRouter = require('./src/route/userRouter');
 const classRouter = require('./src/route/classRouter');
-const { sequelize } = require('./src/models');
 const reminder = require('./src/utils/reminder');
 
 // reminder
@@ -37,8 +35,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, async () => {
-  console.log('server running on PORT ' + PORT);
-  await sequelize.authenticate();
-  console.log('Database Connected!');
-});
+module.exports = app;

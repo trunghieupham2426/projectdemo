@@ -19,7 +19,11 @@ router.get('/', (req, res) => {
 router.get('/verify/:token', verifyUserEmail);
 
 router.post('/signup', validate.signUpValidate, signup);
-router.post('/login', auth.loginLimiter, login);
+router.post(
+  '/login',
+  //auth.loginLimiter,
+  login
+);
 router.patch(
   '/updateMyPassword',
   auth.protectingRoutes,
