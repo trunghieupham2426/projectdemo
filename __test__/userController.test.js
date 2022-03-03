@@ -20,9 +20,9 @@ describe('test /api/users', () => {
       const res = await request(app).post('/api/users/signup').send(signUpObj);
       expect(res.statusCode).toBe(200);
     });
-    it('should return status code 401 when insert the email already taken', async () => {
+    it('should return status code 400 when insert the email already taken', async () => {
       const res = await request(app).post('/api/users/signup').send(signUpObj);
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(400);
     });
   });
 });

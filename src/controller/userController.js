@@ -77,7 +77,7 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const errMsg = err?.errors ? err.errors[0].message : undefined;
     if (errMsg) {
-      return next(new AppError(errMsg, 401));
+      return next(new AppError(errMsg, 400));
     }
     next(err);
   }
