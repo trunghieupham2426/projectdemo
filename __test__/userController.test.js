@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('./../app');
 const { User } = require('./../src/models');
 const path = require('path');
+const fsExtra = require('fs-extra');
 
 const signUpObj = {
   email: 'abc@gmail.com',
@@ -87,6 +88,11 @@ describe('test /api/users', () => {
       const res = await request(app).post('/api/users/login').send(userSeed);
       token = res.body.token;
     });
+    afterAll(async () => {
+      //delete all image when user upload inside 'test folder'
+      const fileDir = path.join(__dirname, '../public/image/test');
+      await fsExtra.emptyDir(fileDir);
+    });
     it('should return invalid token message  ', async () => {
       token = 'invalid token';
       const res = await request(app)
@@ -129,12 +135,13 @@ describe('test /api/users', () => {
       expect(res.body.status).toBe('success');
     });
     it('should return 200 if insert valid image file when update ', async () => {
-      // bi loi Aborted chua fix duoc
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
         .set('Authorization', 'Bearer ' + token)
-        .attach('avatar', './img/cat.jpg');
+        .attach('avatar', '__test__/img/cat.jpg');
+      expect(res.statusCode).toBe(200);
+      expect(res.body.status).toBe('success');
     });
   });
 });

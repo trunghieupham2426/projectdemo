@@ -5,19 +5,22 @@ const AppError = require('./../utils/appError');
 const helperFn = require('../utils/helperFn');
 const jwt = require('jsonwebtoken');
 const cloudinary = require('./../utils/imageUpload');
-
 const uploadAvatar = helperFn.upload.single('avatar');
+const isTest = process.env.NODE_ENV === 'test';
 
 //====================
 
 const updateMe = async (req, res, next) => {
   try {
-    const user = await User.findOne({ where: { id: req.user.id } });
+    const user = await User.findOne({
+      where: { id: req.user.id },
+      attributes: { exclude: ['password', 'role', 'countLogin', 'isActive'] },
+    });
     const { phone, age } = req.body;
     if (req.file) {
       const img = await cloudinary.uploader.upload(req.file.path, {
         public_id: req.file.filename, // define filename
-        folder: 'DEV',
+        folder: isTest ? 'DEVtest' : 'DEV',
       });
       user.avatar_path = await img.url;
     }

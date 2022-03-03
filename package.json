@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "jest --runInBand --force-exit"
+    "test": "cross-env NODE_ENV=test jest --runInBand --force-exit"
   },
   "author": "hieupham",
   "license": "ISC",
@@ -31,6 +31,7 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
     "cross-env": "^7.0.3",
+    "fs-extra": "^10.0.1",
     "jest": "^27.5.1",
     "supertest": "^6.2.2"
   }

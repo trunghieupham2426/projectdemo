@@ -40,10 +40,11 @@ exports.comparePassword = async (inputPwd, userPwd) => {
 };
 
 // image upload setting
-
+const isTest = process.env.NODE_ENV === 'test';
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/image/user');
+    // cb(null, 'public/image/user' );
+    cb(null, isTest ? 'public/image/test' : 'public/image/user');
   },
   filename: (req, file, cb) => {
     cb(null, `user-${req.user.id}-avatar.jpeg`); // override the images
