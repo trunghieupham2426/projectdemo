@@ -23,7 +23,7 @@ exports.protectingRoutes = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    next(new AppError('invalid token', 400));
+    next(new AppError('invalid token', 401));
   }
 };
 

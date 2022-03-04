@@ -45,14 +45,13 @@ const updatePassword = async (req, res, next) => {
     });
     const checkPwd = await helperFn.comparePassword(oldPwd, user.password);
     if (!checkPwd) {
-      return next(new AppError('please insert correct old password', 401));
+      return next(new AppError('please insert correct old password', 400));
     }
     const hashPWD = await bcrypt.hash(newPwd, 8);
     user.password = hashPWD;
     user.save();
     res.status(200).json({
       status: 'success',
-      message: 'password updated',
     });
   } catch (err) {
     next(err);

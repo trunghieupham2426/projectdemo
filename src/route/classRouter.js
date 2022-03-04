@@ -22,7 +22,7 @@ const auth = require('../middleware/auth');
 
 //admin
 
-router.get('/', getAllClass);
+router.get('/', auth.protectingRoutes, getAllClass);
 router.post(
   '/',
   auth.protectingRoutes,
