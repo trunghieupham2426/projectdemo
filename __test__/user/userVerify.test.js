@@ -30,7 +30,8 @@ describe('Verify User Email', () => {
   it('redirect function will call if verifyToken is valid', async () => {
     mockRequest.params.token = verifyToken;
     await verifyUserEmail(mockRequest, mockResponse, next);
-    expect(mockResponse.redirect).toHaveBeenCalled(); // khi verify thanh cong , se redirect user sang trang chu
+    expect(mockResponse.redirect).toHaveBeenCalled();
+    expect(mockResponse.redirect).toHaveBeenCalledWith('/api/users');
   });
   it('next function will call if email does not in Database', async () => {
     mockRequest.params.token = helperFn.generaToken(
