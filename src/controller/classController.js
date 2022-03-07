@@ -55,7 +55,7 @@ const cancelRegisClass = async (req, res, next) => {
     });
     if (!cancelClass) {
       return next(
-        new AppError(`this class already cancel or not registered`, 400)
+        new AppError(`this class already cancel or not pending`, 400)
       );
     }
     cancelClass.status = 'cancel';
@@ -136,6 +136,7 @@ const getMyRegisClass = async (req, res, next) => {
 const getCalendarClass = async (req, res, next) => {
   try {
     const class_id = req.query.class;
+
     if (!class_id) {
       return next(new AppError('please provide class id', 400));
     }
@@ -155,7 +156,7 @@ const getCalendarClass = async (req, res, next) => {
     }
     res.status(200).json({
       status: 'success',
-      data: currentClass,
+      data: currentCLass,
     });
   } catch (err) {
     console.log(err);

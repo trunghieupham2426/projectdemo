@@ -2,17 +2,17 @@ const path = require('path');
 const fsExtra = require('fs-extra');
 const request = require('supertest');
 const app = require('./../../app');
-
-const userSeed = {
-  email: 'user@gmail.com',
-  password: '123456',
-};
+const { User } = require('./../../src/models');
+const { mockUser } = require('./../helper/mockObject');
+const helper = require('./../helper/helper');
 
 describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
   let token;
   beforeAll(async () => {
-    const res = await request(app).post('/api/users/login').send(userSeed);
-    token = res.body.token;
+    token = await helper.getLoginToken();
+  });
+  afterAll(async () => {
+    await User.destroy({ where: { email: mockUser.email } });
   });
   describe('update_password', () => {
     it('should return 200 if update password successfully', async () => {
@@ -20,6 +20,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         oldPwd: '123456',
         newPwd: '123456',
       };
+
       const res = await request(app)
         .patch('/api/users/updateMyPassword')
         .send(data)
@@ -27,6 +28,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('success');
     });
+
     it('should return 400 and fail message if oldPwd is wrong', async () => {
       const data = {
         oldPwd: '1234567',
@@ -47,6 +49,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const fileDir = path.join(__dirname, '../../public/image/test');
       await fsExtra.emptyDir(fileDir);
     });
+
     it('should return 200 if insert valid image file when update ', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
@@ -56,6 +59,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('success');
     });
+
     it('should return 200 if data insert is valid ', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
@@ -69,6 +73,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       expect(res.body.data).toHaveProperty('phone');
       expect(res.body.data).toHaveProperty('avatar_path');
     });
+
     it('should return error message if insert field not allow to change EMAIL , PASSWORD ...', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
@@ -78,6 +83,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       expect(res.body.status).toBe('error');
       expect(res.body.message).toMatch(/not allowed/);
     });
+
     it('should return error if insert field not pass validate', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
@@ -86,6 +92,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         .field('phone', 'random string');
       expect(res.body.status).toBe('error');
     });
+
     it('should return error if upload file not the image', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')

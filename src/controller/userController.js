@@ -61,11 +61,10 @@ const updatePassword = async (req, res, next) => {
 const signup = async (req, res, next) => {
   try {
     const { email, username, password } = req.body;
-    const hashPWD = await bcrypt.hash(password, 8);
     const user = await User.create({
       email,
       username,
-      password: hashPWD,
+      password: password,
     });
     const token = helperFn.generaToken({ email }, '3m');
     helperFn.sendEmail(
@@ -146,10 +145,16 @@ const verifyUserEmail = async (req, res, next) => {
         email: decoded.email,
       },
     });
+    if (!user) {
+      return next(new AppError('this email not available', 401));
+    }
     user.isActive = true;
     user.save();
-    res.redirect('/api/users');
+    res.status(200).json({
+      status: 'success',
+    });
   } catch (err) {
+    // console.log(err);
     next(err);
   }
 };
