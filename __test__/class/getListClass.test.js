@@ -1,14 +1,15 @@
 const request = require('supertest');
 const app = require('../../app');
-const helper = require('./../helper/helper');
-const { mockUser } = require('./../helper/mockObject');
+const helperTest = require('./../helper/helperTest');
+const { mockUser, mockClass1, mockClass2 } = require('./../helper/mockObject');
 const { Class, User } = require('./../../src/models');
 
 describe('GET LIST CLASS', () => {
   let token;
   beforeAll(async () => {
-    token = await helper.getLoginToken();
-    await helper.createMockClass();
+    const user = await helperTest.getLoginToken();
+    token = user.token;
+    await helperTest.createMockModel(Class, mockClass1, mockClass2);
   });
   afterAll(async () => {
     await User.destroy({ where: { email: mockUser.email } });

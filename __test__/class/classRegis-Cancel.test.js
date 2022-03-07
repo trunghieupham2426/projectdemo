@@ -2,19 +2,24 @@ const request = require('supertest');
 const app = require('../../app');
 const helperFn = require('../../src/utils/helperFn');
 const { User, Class, Regis } = require('../../src/models');
-const { mockUser } = require('./../helper/mockObject');
-const helper = require('./../helper/helper');
+const { mockUser, mockClass1, mockClass2 } = require('./../helper/mockObject');
+const helperTest = require('./../helper/helperTest');
 
 describe('User register class', () => {
   let token;
   let class_id1;
   let class_id2;
   beforeAll(async () => {
-    token = await helper.getLoginToken();
+    const user = await helperTest.getLoginToken();
+    token = user.token;
     // setup class
-    const mockListClassId = await helper.createMockClass();
-    class_id1 = mockListClassId.class_id1;
-    class_id2 = mockListClassId.class_id2;
+    const classes = await helperTest.createMockModel(
+      Class,
+      mockClass1,
+      mockClass2
+    );
+    class_id1 = classes.id1;
+    class_id2 = classes.id2;
   });
   afterAll(async () => {
     await Regis.destroy({ where: {} });

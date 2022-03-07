@@ -4,12 +4,13 @@ const request = require('supertest');
 const app = require('./../../app');
 const { User } = require('./../../src/models');
 const { mockUser } = require('./../helper/mockObject');
-const helper = require('./../helper/helper');
+const helperTest = require('./../helper/helperTest');
 
 describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
   let token;
   beforeAll(async () => {
-    token = await helper.getLoginToken();
+    const user = await helperTest.getLoginToken();
+    token = user.token;
   });
   afterAll(async () => {
     await User.destroy({ where: { email: mockUser.email } });

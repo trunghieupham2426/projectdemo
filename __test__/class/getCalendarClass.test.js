@@ -1,20 +1,33 @@
 const request = require('supertest');
 const app = require('../../app');
-const helper = require('./../helper/helper');
+const helperTest = require('./../helper/helperTest');
 const { Class_Calendar, Class, Calendar } = require('./../../src/models');
-
+const {
+  mockClass1,
+  mockClass2,
+  mockCalendar1,
+  mockCalendar2,
+} = require('./../helper/mockObject');
 describe('GET CALENDAR CLASS', () => {
   let class_id;
   let calendar_id1;
   let calendar_id2;
   beforeAll(async () => {
     //create Class
-    const classes = await helper.createMockClass();
-    class_id = classes.class_id1;
+    const classes = await helperTest.createMockModel(
+      Class,
+      mockClass1,
+      mockClass2
+    );
+    class_id = classes.id1;
     //create Calendar
-    const calendars = await helper.createMockCalendar();
-    calendar_id1 = calendars.calendar_id1;
-    calendar_id2 = calendars.calendar_id2;
+    const calendars = await helperTest.createMockModel(
+      Calendar,
+      mockCalendar1,
+      mockCalendar2
+    );
+    calendar_id1 = calendars.id1;
+    calendar_id2 = calendars.id2;
     //create class-calendar
     await Class_Calendar.create({
       class_id: class_id,
