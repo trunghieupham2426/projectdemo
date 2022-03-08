@@ -49,7 +49,10 @@ describe('GET CALENDAR CLASS', () => {
     const res = await request(app).get(
       `/api/classes/calendar?class=${class_id}`
     );
+
     expect(res.statusCode).toBe(200);
+    expect(res.body.data).toHaveProperty('Calendars');
+    expect(res.body.data).toHaveProperty('subject');
   });
 
   it('should return 404 if provide invalid class_id', async () => {

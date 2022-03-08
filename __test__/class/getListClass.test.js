@@ -22,5 +22,7 @@ describe('GET LIST CLASS', () => {
       .set('Authorization', 'Bearer ' + token);
     expect(res.statusCode).toBe(200);
     expect(res.body.data).not.toHaveLength(0); // neu get thanh cong class thi length se !== 0
+    expect(res.body.data[0]).toHaveProperty('subject', 'HTML');
+    expect(res.body.data[0]).toHaveProperty('status', 'open');
   });
 });

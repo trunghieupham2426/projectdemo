@@ -1,6 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 var moment = require('moment'); // require
+const AppError = require('./../utils/appError');
 
 module.exports = (sequelize, Sequelize) => {
   class Class extends Model {

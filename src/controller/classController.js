@@ -229,7 +229,7 @@ const updateClass = async (req, res, next) => {
       data: currentClass,
     });
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     next(err);
   }
 };
@@ -242,7 +242,9 @@ const deleteClass = async (req, res, next) => {
       return next(new AppError('No Class found with this id', 404));
     }
     await currentClass.destroy();
-    res.send('delete class successfully');
+    res.status(200).json({
+      status: 'success',
+    });
   } catch (err) {
     // console.log(err);
     next(err);
@@ -274,11 +276,12 @@ const updateCalendar = async (req, res, next) => {
     if (!currentCalendar) {
       return next(new AppError('No calendar found with this id', 404));
     }
-    Object.keys(req.body).map((el) => {
-      currentCalendar[el] = req.body[el];
-    });
+    Object.assign(currentCalendar, req.body);
     currentCalendar.save();
-    res.send(currentCalendar);
+    res.status(200).json({
+      status: 'success',
+      data: currentCalendar,
+    });
   } catch (err) {
     next(err);
   }

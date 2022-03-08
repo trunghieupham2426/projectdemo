@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('./../../app');
-const { User, Class, Regis, Calendar } = require('./../../src/models');
+const { User } = require('./../../src/models');
 const { mockUser } = require('./mockObject');
 
 exports.getLoginToken = async () => {
