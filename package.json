@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=10.6.0"
+  },
   "scripts": {
     "start": "nodemon server.js",
-    "test": "cross-env NODE_ENV=test jest  --runInBand --force-exit"
+    "test": "cross-env NODE_ENV=test jest   --runInBand --force-exit"
   },
   "author": "hieupham",
   "license": "ISC",
@@ -31,8 +34,19 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
     "cross-env": "^7.0.3",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^26.1.1",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.3",
     "fs-extra": "^10.0.1",
     "jest": "^27.5.1",
+    "prettier": "^2.5.1",
     "supertest": "^6.2.2"
   }
 }

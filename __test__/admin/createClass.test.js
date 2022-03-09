@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../app');
 const { Class } = require('../../src/models');
-const { mockClass2 } = require('./../helper/mockObject');
+const { mockClass2 } = require('../helper/mockObject');
 // not finish
 
 const adminSeed = {
@@ -23,7 +23,7 @@ describe('CREATE CLASS', () => {
     const res = await request(app)
       .post('/api/classes/')
       .send(mockClass2)
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.data).toHaveProperty('id');
     expect(res.body.data).toHaveProperty('subject');
@@ -34,7 +34,7 @@ describe('CREATE CLASS', () => {
     const res = await request(app)
       .post('/api/classes/')
       .send({ ...mockClass2, start_date: '2021-02-01' })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.body.status).toBe('error');
     expect(res.body.message).toMatch(/greater than today/);
@@ -43,7 +43,7 @@ describe('CREATE CLASS', () => {
     const res = await request(app)
       .post('/api/classes/')
       .send({ ...mockClass2, end_date: '2021-02-01' })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.body.status).toBe('error');
     expect(res.body.message).toMatch(/greater than start_date/);
@@ -53,7 +53,7 @@ describe('CREATE CLASS', () => {
     const res = await request(app)
       .post('/api/classes/')
       .send({ ...mockClass2, subject: '' })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.body.status).toBe('error');
     expect(res.body.message).toMatch(/not allowed .+ empty/);
   });

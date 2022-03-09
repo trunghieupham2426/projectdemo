@@ -1,7 +1,7 @@
-const { User } = require('../models');
-const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
-const AppError = require('./../utils/appError');
+const rateLimit = require('express-rate-limit');
+const { User } = require('../models');
+const AppError = require('../utils/appError');
 
 exports.protectingRoutes = async (req, res, next) => {
   try {
@@ -20,6 +20,7 @@ exports.protectingRoutes = async (req, res, next) => {
     if (!user) {
       return next(new AppError('this user does not exist', 401));
     }
+
     req.user = user;
     next();
   } catch (err) {
@@ -29,7 +30,7 @@ exports.protectingRoutes = async (req, res, next) => {
 
 exports.loginLimiter = rateLimit({
   windowMs: 3 * 60 * 1000, // 3 minutes
-  max: 5, // 5 request per / 3 minutes
+  max: process.env.NODE_ENV === 'test' ? 100 : 5,
   message: 'Something went wrong , try again after 3 minutes',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers

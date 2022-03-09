@@ -1,5 +1,6 @@
 const express = require('express');
 const validate = require('../validate/validate');
+
 const router = express.Router();
 
 const {
@@ -8,41 +9,44 @@ const {
   getAllClass,
   getMyRegisClass,
   getCalendarClass,
+} = require('../controller/classController');
+
+const {
   createClass,
+  assignCalendarForClass,
   updateClass,
   deleteClass,
-  submitClassRegistration,
-  getListRegisterClass,
-  viewUserInClass,
   createCalendar,
   updateCalendar,
-  assignCalendarForClass,
-} = require('./../controller/classController');
+  submitClassRegistration,
+  viewUserInClass,
+  getListRegisterClass,
+} = require('../controller/adminController');
+
 const auth = require('../middleware/auth');
 
 //admin
 
-router.get('/', auth.protectingRoutes, getAllClass);
-router.post(
-  '/',
-  auth.protectingRoutes,
-  auth.checkRole('admin'),
-  validate.classValidate,
-  createClass
-);
-router.patch(
-  '/:id',
-  auth.protectingRoutes,
-  auth.checkRole('admin'),
-  validate.classValidate,
-  updateClass
-);
-router.delete(
-  '/:id',
-  auth.protectingRoutes,
-  auth.checkRole('admin'),
-  deleteClass
-);
+router
+  .route('/')
+  .get(auth.protectingRoutes, getAllClass)
+  .post(
+    auth.protectingRoutes,
+    auth.checkRole('admin'),
+    validate.classValidate,
+    createClass
+  );
+
+router
+  .route('/:id')
+  .patch(
+    auth.protectingRoutes,
+    auth.checkRole('admin'),
+    validate.classValidate,
+    updateClass
+  )
+  .delete(auth.protectingRoutes, auth.checkRole('admin'), deleteClass);
+
 router.put(
   '/admin/submit',
   auth.protectingRoutes,
@@ -65,13 +69,6 @@ router.get(
 );
 
 router.post(
-  '/calendar',
-  auth.protectingRoutes,
-  auth.checkRole('admin'),
-  validate.calendarValidate,
-  createCalendar
-);
-router.post(
   '/classCalendar',
   auth.protectingRoutes,
   auth.checkRole('admin'),
@@ -86,8 +83,15 @@ router.patch(
 );
 
 //user - admin
-
-router.get('/calendar', getCalendarClass);
+router
+  .route('/calendar')
+  .post(
+    auth.protectingRoutes,
+    auth.checkRole('admin'),
+    validate.calendarValidate,
+    createCalendar
+  )
+  .get(getCalendarClass);
 router.get('/myClass', auth.protectingRoutes, getMyRegisClass);
 router.post(
   '/register',

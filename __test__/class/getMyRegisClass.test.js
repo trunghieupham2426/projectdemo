@@ -22,7 +22,7 @@ describe('GET MY REGISTERED CLASS', () => {
     await request(app)
       .post('/api/classes/register')
       .send({ class_id: class_id1 })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
   });
   afterAll(async () => {
     await Regis.destroy({ where: {} });
@@ -30,10 +30,10 @@ describe('GET MY REGISTERED CLASS', () => {
     await Class.destroy({ where: {} });
   });
 
-  it('should return 200 ', async () => {
+  it('should return 200', async () => {
     const res = await request(app)
       .get('/api/classes/myClass')
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.data).not.toHaveLength(0);
     expect(res.body.data[0]).toHaveProperty('Class');

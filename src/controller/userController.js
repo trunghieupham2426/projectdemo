@@ -1,10 +1,11 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const { User } = require('../models');
-const AppError = require('./../utils/appError');
-const helperFn = require('../utils/helperFn');
 const jwt = require('jsonwebtoken');
-const cloudinary = require('./../utils/imageUpload');
+const { User } = require('../models');
+const AppError = require('../utils/appError');
+const helperFn = require('../utils/helperFn');
+const cloudinary = require('../utils/imageUpload');
+
 const uploadAvatar = helperFn.upload.single('avatar');
 const isTest = process.env.NODE_ENV === 'test';
 
@@ -32,7 +33,7 @@ const updateMe = async (req, res, next) => {
     });
     user.save();
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     next(err);
   }
 };
@@ -61,11 +62,12 @@ const updatePassword = async (req, res, next) => {
 const signup = async (req, res, next) => {
   try {
     const { email, username, password } = req.body;
-    const user = await User.create({
+    await User.create({
       email,
       username,
       password: password,
     });
+
     const token = helperFn.generaToken({ email }, '3m');
     helperFn.sendEmail(
       email,
@@ -98,7 +100,7 @@ const login = async (req, res, next) => {
     if (!user) {
       return next(new AppError('your email not correct', 400));
     }
-    const { email, password, isActive, countLogin, avatar_path, username } =
+    const { email, password, isActive, countLogin, avatar_path, username, id } =
       user;
     if (countLogin >= 3 || !isActive) {
       return next(
@@ -110,7 +112,7 @@ const login = async (req, res, next) => {
     }
     const isCorrect = await helperFn.comparePassword(inputPassword, password);
     if (!isCorrect) {
-      user.countLogin++;
+      await user.increment('countLogin');
       user.save();
       return next(new AppError('your password not correct', 400));
     }
@@ -126,11 +128,12 @@ const login = async (req, res, next) => {
           email: email,
           username: username,
           avatar_path: avatar_path,
+          id: id,
         },
       },
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     next(err);
   }
 };

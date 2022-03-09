@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('./../../app');
-const { User } = require('./../../src/models');
+const app = require('../../app');
+const { User } = require('../../src/models');
 const { mockUser } = require('./mockObject');
 
 exports.getLoginToken = async () => {
@@ -8,7 +8,7 @@ exports.getLoginToken = async () => {
   const res = await request(app).post('/api/users/login').send(mockUser);
   return {
     token: res.body.token,
-    userId: res.id,
+    userId: res.body.data.user.id,
   };
 };
 

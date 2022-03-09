@@ -4,6 +4,7 @@ const mockUser = {
   username: 'user',
   isActive: '1',
 };
+
 const mockClass1 = {
   max_student: 1,
   subject: 'HTML',
@@ -17,6 +18,20 @@ const mockClass2 = {
   subject: 'JAVA',
   start_date: '2023-02-15',
   end_date: '2023-05-15',
+};
+const mockClass3 = {
+  max_student: 4,
+  subject: 'JS',
+  status: 'open',
+  start_date: '2023-05-25',
+  end_date: '2023-08-25',
+};
+const mockClass4 = {
+  max_student: 10,
+  subject: 'RUBY',
+  status: 'open',
+  start_date: '2023-06-20',
+  end_date: '2023-08-25',
 };
 const mockCalendar1 = {
   day_of_week: 'mon',
@@ -34,6 +49,8 @@ module.exports = {
   mockUser,
   mockClass1,
   mockClass2,
+  mockClass3,
+  mockClass4,
   mockCalendar1,
   mockCalendar2,
 };

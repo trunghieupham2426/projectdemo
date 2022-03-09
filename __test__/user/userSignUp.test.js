@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('./../../app');
-const { User } = require('./../../src/models');
-const helperFn = require('./../../src/utils/helperFn');
+const app = require('../../app');
+const { User } = require('../../src/models');
+const helperFn = require('../../src/utils/helperFn');
 const signUpObj = {
   email: 'abc@gmail.com',
   username: 'binladen',

@@ -2,8 +2,8 @@ const request = require('supertest');
 const app = require('../../app');
 const helperFn = require('../../src/utils/helperFn');
 const { User, Class, Regis } = require('../../src/models');
-const { mockUser, mockClass1, mockClass2 } = require('./../helper/mockObject');
-const helperTest = require('./../helper/helperTest');
+const { mockUser, mockClass1, mockClass2 } = require('../helper/mockObject');
+const helperTest = require('../helper/helperTest');
 
 describe('User register class', () => {
   let token;
@@ -30,11 +30,11 @@ describe('User register class', () => {
   // REGISTER CLASS
 
   describe('REGIS CLASS', () => {
-    it('should return error msg if the class not open ', async () => {
+    it('should return error msg if the class not open', async () => {
       const res = await request(app)
         .post('/api/classes/register')
         .send({ class_id: class_id2 })
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
 
       expect(res.statusCode).toBe(404);
       expect(res.body.message).toMatch(/not available/);
@@ -45,7 +45,7 @@ describe('User register class', () => {
       const res = await request(app)
         .post('/api/classes/register')
         .send({ class_id: class_id1 })
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toEqual(200);
       expect(sendEmailMock).toHaveBeenCalled();
     });
@@ -54,7 +54,7 @@ describe('User register class', () => {
       const res = await request(app)
         .post('/api/classes/register')
         .send({ class_id: class_id1 })
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toEqual(400);
     });
   });
@@ -63,23 +63,23 @@ describe('User register class', () => {
 
   describe('CANCEL REGISTERED CLASS', () => {
     beforeAll(async () => {
-      const res = await request(app)
+      await request(app)
         .post('/api/classes/register')
         .send({ class_id: class_id1 })
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
     });
 
     it('should return 200 if user cancel class is pending', async () => {
       const res = await request(app)
         .patch(`/api/classes/${class_id1}/cancel`)
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
     });
 
     it('should return 400 if user cancel class is not pending', async () => {
       const res = await request(app)
         .patch(`/api/classes/${class_id2}/cancel`)
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(400);
     });
   });

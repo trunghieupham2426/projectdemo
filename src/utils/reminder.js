@@ -1,10 +1,10 @@
-const helperFn = require('./../utils/helperFn');
-const { sequelize, User, Class_Users, Class } = require('./../models');
+const helperFn = require('./helperFn');
+const { sequelize } = require('../models');
 const { reminderQuery } = require('./rawQuery');
 
 const reminder = async () => {
   try {
-    const [results, metadata] = await sequelize.query(reminderQuery);
+    const [results] = await sequelize.query(reminderQuery);
     const groupEmail = Object.values(
       results.reduce((prev, cur) => {
         prev[cur.id] = prev[cur.id] || { ...cur, email: [] };
@@ -20,7 +20,7 @@ const reminder = async () => {
       );
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 };
 

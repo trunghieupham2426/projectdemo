@@ -1,8 +1,8 @@
 const request = require('supertest');
 const app = require('../../app');
 const { Class } = require('../../src/models');
-const { mockClass2, mockClass1 } = require('./../helper/mockObject');
-const helperTest = require('./../helper/helperTest');
+const { mockClass2, mockClass1 } = require('../helper/mockObject');
+const helperTest = require('../helper/helperTest');
 // not finish
 
 const adminSeed = {
@@ -32,7 +32,7 @@ describe('DELETE CLASS', () => {
     const class_id = 0;
     const res = await request(app)
       .delete(`/api/classes/${class_id}`)
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toMatch(/no class/i);
   });
@@ -40,7 +40,7 @@ describe('DELETE CLASS', () => {
   it('should return 200 if class_id is valid', async () => {
     const res = await request(app)
       .delete(`/api/classes/${class_id1}`)
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('success');
   });

@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('./../../app');
-const { User } = require('./../../src/models');
-const { mockUser } = require('./../helper/mockObject');
+const app = require('../../app');
+const { User } = require('../../src/models');
+const { mockUser } = require('../helper/mockObject');
 
 describe('LOGIN /api/users/login', () => {
   beforeAll(async () => {

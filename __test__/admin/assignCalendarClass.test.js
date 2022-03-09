@@ -8,7 +8,6 @@ const {
   mockCalendar2,
 } = require('../helper/mockObject');
 const helperTest = require('../helper/helperTest');
-// not finish
 
 const adminSeed = {
   email: 'admin@gmail.com',
@@ -18,7 +17,6 @@ describe('Update Class', () => {
   let token;
   let class_id2;
   let calendar_id1;
-  let calendar_id2;
   beforeAll(async () => {
     //login with admin account
     const res = await request(app).post('/api/users/login').send(adminSeed);
@@ -37,7 +35,6 @@ describe('Update Class', () => {
       mockCalendar2
     );
     calendar_id1 = calendars.id1;
-    calendar_id2 = calendars.id2;
   });
   afterAll(async () => {
     await Class_Calendar.destroy({ where: {} });
@@ -49,7 +46,7 @@ describe('Update Class', () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
       .send({ class_id: class_id2, calendar_id: calendar_id1 })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('success');
@@ -59,7 +56,7 @@ describe('Update Class', () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
       .send({ class_id: class_id2, calendar_id: calendar_id1 })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe('fail');
   });
@@ -68,15 +65,16 @@ describe('Update Class', () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
       .send({ class_id: '', calendar_id: calendar_id1 })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.status).toBe('fail');
   });
+
   it('should return 404 if calendar_id is empty', async () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
       .send({ class_id: class_id2, calendar_id: '' })
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.status).toBe('fail');
   });

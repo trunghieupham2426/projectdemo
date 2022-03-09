@@ -1,13 +1,14 @@
 const request = require('supertest');
 const app = require('../../app');
-const helperTest = require('./../helper/helperTest');
-const { Class_Calendar, Class, Calendar } = require('./../../src/models');
+const helperTest = require('../helper/helperTest');
+const { Class_Calendar, Class, Calendar } = require('../../src/models');
 const {
   mockClass1,
   mockClass2,
   mockCalendar1,
   mockCalendar2,
-} = require('./../helper/mockObject');
+} = require('../helper/mockObject');
+
 describe('GET CALENDAR CLASS', () => {
   let class_id;
   let calendar_id1;

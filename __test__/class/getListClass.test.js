@@ -1,8 +1,8 @@
 const request = require('supertest');
 const app = require('../../app');
-const helperTest = require('./../helper/helperTest');
-const { mockUser, mockClass1, mockClass2 } = require('./../helper/mockObject');
-const { Class, User } = require('./../../src/models');
+const helperTest = require('../helper/helperTest');
+const { mockUser, mockClass1, mockClass2 } = require('../helper/mockObject');
+const { Class, User } = require('../../src/models');
 
 describe('GET LIST CLASS', () => {
   let token;
@@ -16,10 +16,10 @@ describe('GET LIST CLASS', () => {
     await Class.destroy({ where: {} });
   });
 
-  it('should get all class ', async () => {
+  it('should get all class', async () => {
     const res = await request(app)
       .get('/api/classes')
-      .set('Authorization', 'Bearer ' + token);
+      .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.data).not.toHaveLength(0); // neu get thanh cong class thi length se !== 0
     expect(res.body.data[0]).toHaveProperty('subject', 'HTML');

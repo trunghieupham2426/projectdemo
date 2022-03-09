@@ -1,7 +1,7 @@
 const request = require('supertest');
-const app = require('./../../app');
-const { User } = require('./../../src/models');
-const helperFn = require('./../../src/utils/helperFn');
+const app = require('../../app');
+const { User } = require('../../src/models');
+const helperFn = require('../../src/utils/helperFn');
 
 const signUpObj = {
   email: 'abc@gmail.com',
@@ -11,7 +11,7 @@ const signUpObj = {
 describe('Verify User Email', () => {
   let verifyToken;
   beforeAll(async () => {
-    const res = await request(app).post('/api/users/signup').send(signUpObj);
+    await request(app).post('/api/users/signup').send(signUpObj);
     verifyToken = helperFn.generaToken({ email: signUpObj.email }, '3m');
   });
 

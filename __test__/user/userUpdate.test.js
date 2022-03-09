@@ -1,10 +1,10 @@
 const path = require('path');
 const fsExtra = require('fs-extra');
 const request = require('supertest');
-const app = require('./../../app');
-const { User } = require('./../../src/models');
-const { mockUser } = require('./../helper/mockObject');
-const helperTest = require('./../helper/helperTest');
+const app = require('../../app');
+const { User } = require('../../src/models');
+const { mockUser } = require('../helper/mockObject');
+const helperTest = require('../helper/helperTest');
 
 describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
   let token;
@@ -25,7 +25,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const res = await request(app)
         .patch('/api/users/updateMyPassword')
         .send(data)
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('success');
     });
@@ -38,7 +38,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const res = await request(app)
         .patch('/api/users/updateMyPassword')
         .send(data)
-        .set('Authorization', 'Bearer ' + token);
+        .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(400);
       expect(res.body.status).toBe('fail');
     });
@@ -51,21 +51,21 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       await fsExtra.emptyDir(fileDir);
     });
 
-    it('should return 200 if insert valid image file when update ', async () => {
+    it('should return 200 if insert valid image file when update', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', `Bearer ${token}`)
         .attach('avatar', '__test__/img/cat.jpg');
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('success');
     });
 
-    it('should return 200 if data insert is valid ', async () => {
+    it('should return 200 if data insert is valid', async () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', `Bearer ${token}`)
         .field('age', 20)
         .field('phone', 999999999);
       expect(res.statusCode).toBe(200);
@@ -79,7 +79,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', `Bearer ${token}`)
         .field('email', 'changeEmail@gmail.com');
       expect(res.body.status).toBe('error');
       expect(res.body.message).toMatch(/not allowed/);
@@ -89,7 +89,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', `Bearer ${token}`)
         .field('phone', 'random string');
       expect(res.body.status).toBe('error');
     });
@@ -98,7 +98,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
       const res = await request(app)
         .patch('/api/users/updateMe')
         .set('Content-Type', 'multipart/form-data')
-        .set('Authorization', 'Bearer ' + token)
+        .set('Authorization', `Bearer ${token}`)
         .attach('avatar', '__test__/user/userUpdate.test.js');
       expect(res.body.status).toBe('error');
       expect(res.body.message).toMatch(/only images/);
