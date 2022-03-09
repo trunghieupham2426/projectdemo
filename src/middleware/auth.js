@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const { User } = require('../models');
-const AppError = require('../utils/appError');
+const AppError = require('../utils/ErrorHandler/appError');
 
 exports.protectingRoutes = async (req, res, next) => {
   try {

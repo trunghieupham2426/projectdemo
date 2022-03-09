@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const phone = Joi.extend(require('joi-phone-number'));
-const AppError = require('../utils/appError');
+const AppError = require('../utils/ErrorHandler/appError');
 
 const signUpValidateSchema = Joi.object({
   username: Joi.string()

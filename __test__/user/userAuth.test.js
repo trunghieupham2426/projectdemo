@@ -37,18 +37,21 @@ describe('Authentication', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(401);
   });
+
   it('should return 200 if token is valid', async () => {
     const res = await request(app)
       .get('/api/classes')
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
   });
+
   it('should return 403 if user dont have permission to access route', async () => {
     const res = await request(app)
       .get('/api/classes/listRegistered')
       .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(403);
   });
+
   it('should return 200 , only admin can access this route', async () => {
     const admin = await request(app).post('/api/users/login').send(adminSeed);
     token = admin.body.token;

@@ -8,133 +8,106 @@ const {
   Calendar,
   Class_Calendar,
 } = require('../models');
-const AppError = require('../utils/appError');
+const AppError = require('../utils/ErrorHandler/appError');
 const helperFn = require('../utils/helperFn');
+const catchAsync = require('../utils/ErrorHandler/catchAsync');
 
 const Op = Sequelize.Op;
 
-const createClass = async (req, res, next) => {
+const createClass = catchAsync(async (req, res, next) => {
   //date mm-dd-yyyy
-  try {
-    const { subject, max_student, start_date, end_date } = req.body;
-    const newClass = await Class.create({
-      subject,
-      max_student,
-      start_date,
-      end_date,
-    });
-    res.status(200).json({
-      status: 'success',
-      data: newClass,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  const { subject, max_student, start_date, end_date } = req.body;
+  const newClass = await Class.create({
+    subject,
+    max_student,
+    start_date,
+    end_date,
+  });
+  res.status(200).json({
+    status: 'success',
+    data: newClass,
+  });
+});
 
-const assignCalendarForClass = async (req, res, next) => {
-  try {
-    const { class_id, calendar_id } = req.body;
-    const classCalendar = await Class_Calendar.findOne({
-      where: { class_id, calendar_id },
-    });
-    if (classCalendar) {
-      return next(new AppError('already assign this calendar for class', 400));
-    }
-    const currentClass = await Class.findOne({ where: { id: class_id } });
-    const currentCalendar = await Calendar.findOne({
-      where: { id: calendar_id },
-    });
-    if (!currentClass || !currentCalendar) {
-      return next(new AppError('class or calendar not available ', 404));
-    }
-    // update status of Class from 'pending' to 'open' when assign calendar
-    await currentClass.update({ status: 'open' });
-    //insert data to class_calendars table
-    await Class_Calendar.create({ class_id, calendar_id });
-    res.status(200).json({
-      status: 'success',
-      message: 'your action successfully',
-    });
-  } catch (err) {
-    // console.log(err);
-    next(err);
+const assignCalendarForClass = catchAsync(async (req, res, next) => {
+  const { class_id, calendar_id } = req.body;
+  const classCalendar = await Class_Calendar.findOne({
+    where: { class_id, calendar_id },
+  });
+  if (classCalendar) {
+    return next(new AppError('already assign this calendar for class', 400));
   }
-};
+  const currentClass = await Class.findOne({ where: { id: class_id } });
+  const currentCalendar = await Calendar.findOne({
+    where: { id: calendar_id },
+  });
+  if (!currentClass || !currentCalendar) {
+    return next(new AppError('class or calendar not available ', 404));
+  }
+  // update status of Class from 'pending' to 'open' when assign calendar
+  await currentClass.update({ status: 'open' });
+  //insert data to class_calendars table
+  await Class_Calendar.create({ class_id, calendar_id });
+  res.status(200).json({
+    status: 'success',
+    message: 'your action successfully',
+  });
+});
 
-const updateClass = async (req, res, next) => {
-  try {
-    const class_id = req.params.id;
-    const currentClass = await Class.findOne({ where: { id: class_id } });
-    if (!currentClass) {
-      return next(new AppError('No Class found with this id', 404));
-    }
-    Object.assign(currentClass, req.body);
-    currentClass.save();
-    res.status(200).json({
-      status: 'success',
-      data: currentClass,
-    });
-  } catch (err) {
-    // console.log(err);
-    next(err);
+const updateClass = catchAsync(async (req, res, next) => {
+  const class_id = req.params.id;
+  const currentClass = await Class.findOne({ where: { id: class_id } });
+  if (!currentClass) {
+    return next(new AppError('No Class found with this id', 404));
   }
-};
+  Object.assign(currentClass, req.body);
+  currentClass.save();
+  res.status(200).json({
+    status: 'success',
+    data: currentClass,
+  });
+});
 
-const deleteClass = async (req, res, next) => {
-  try {
-    const class_id = req.params.id;
-    const currentClass = await Class.findOne({ where: { id: class_id } });
-    if (!currentClass) {
-      return next(new AppError('No Class found with this id', 404));
-    }
-    await currentClass.destroy();
-    res.status(200).json({
-      status: 'success',
-    });
-  } catch (err) {
-    // console.log(err);
-    next(err);
+const deleteClass = catchAsync(async (req, res, next) => {
+  const class_id = req.params.id;
+  const currentClass = await Class.findOne({ where: { id: class_id } });
+  if (!currentClass) {
+    return next(new AppError('No Class found with this id', 404));
   }
-};
+  await currentClass.destroy();
+  res.status(200).json({
+    status: 'success',
+  });
+});
 
-const createCalendar = async (req, res, next) => {
-  try {
-    const { day_of_week, open_time, close_time } = req.body;
-    const calendar = await Calendar.create({
-      day_of_week,
-      open_time,
-      close_time,
-    });
-    res.status(200).json({
-      status: 'success',
-      data: calendar,
-    });
-  } catch (err) {
-    // console.log(err);
-    next(err);
-  }
-};
+const createCalendar = catchAsync(async (req, res, next) => {
+  const { day_of_week, open_time, close_time } = req.body;
+  const calendar = await Calendar.create({
+    day_of_week,
+    open_time,
+    close_time,
+  });
+  res.status(200).json({
+    status: 'success',
+    data: calendar,
+  });
+});
 
-const updateCalendar = async (req, res, next) => {
-  try {
-    const calendar_id = req.params.id;
-    const currentCalendar = await Calendar.findOne({
-      where: { id: calendar_id },
-    });
-    if (!currentCalendar) {
-      return next(new AppError('No calendar found with this id', 404));
-    }
-    Object.assign(currentCalendar, req.body);
-    currentCalendar.save();
-    res.status(200).json({
-      status: 'success',
-      data: currentCalendar,
-    });
-  } catch (err) {
-    next(err);
+const updateCalendar = catchAsync(async (req, res, next) => {
+  const calendar_id = req.params.id;
+  const currentCalendar = await Calendar.findOne({
+    where: { id: calendar_id },
+  });
+  if (!currentCalendar) {
+    return next(new AppError('No calendar found with this id', 404));
   }
-};
+  Object.assign(currentCalendar, req.body);
+  currentCalendar.save();
+  res.status(200).json({
+    status: 'success',
+    data: currentCalendar,
+  });
+});
 
 const submitClassRegistration = async (req, res, next) => {
   const t = await sequelize.transaction();
@@ -214,61 +187,55 @@ const submitClassRegistration = async (req, res, next) => {
   }
 };
 
-const getListRegisterClass = async (req, res, next) => {
+const getListRegisterClass = catchAsync(async (req, res, next) => {
   //127.0.0.1:5000/api/classes/listRegistered?action=reject,accept
-  try {
-    let listRegis;
-    if (req.query.action) {
-      const defaultFilter = ['accept', 'reject'];
-      let userFilter = req.query.action?.split(',');
-      if (!userFilter) {
-        userFilter = defaultFilter;
-      }
-
-      listRegis = await Regis.findAll({
-        where: {
-          adm_action: {
-            [Op.in]: userFilter,
-          },
-        },
-      });
-    } else {
-      listRegis = await Regis.findAll();
+  let listRegis;
+  if (req.query.action) {
+    const defaultFilter = ['accept', 'reject'];
+    let userFilter = req.query.action?.split(',');
+    if (!userFilter) {
+      userFilter = defaultFilter;
     }
-    res.status(200).json({
-      status: 'success',
-      data: listRegis,
-    });
-  } catch (err) {
-    // console.log(err);
-    next(err);
-  }
-};
 
-const viewUserInClass = async (req, res, next) => {
-  try {
-    const class_id = req.params.id;
-    const data = await Class.findOne({
-      where: { id: class_id },
-      attributes: [],
-      include: [
-        {
-          model: User,
-          attributes: ['email', 'username', 'age', 'phone'],
-          through: {
-            attributes: ['status'],
-          },
+    listRegis = await Regis.findAll({
+      where: {
+        adm_action: {
+          [Op.in]: userFilter,
         },
-      ],
+      },
     });
-    res.status(200).json({
-      status: 'success',
-      data: data,
-    });
-  } catch (err) {
-    next(err);
+  } else {
+    listRegis = await Regis.findAll();
   }
-};
+  res.status(200).json({
+    status: 'success',
+    data: listRegis,
+  });
+});
+
+const viewUserInClass = catchAsync(async (req, res, next) => {
+  const class_id = req.params.id;
+  const data = await Class.findOne({
+    where: { id: class_id },
+    attributes: [],
+    include: [
+      {
+        model: User,
+        attributes: ['email', 'username', 'age', 'phone'],
+        through: {
+          attributes: ['status'],
+        },
+      },
+    ],
+  });
+  if (!data) {
+    return next(new AppError('class_id not correct', 404));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: data,
+  });
+});
 
 module.exports = {
   createClass,

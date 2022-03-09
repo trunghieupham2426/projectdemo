@@ -20,6 +20,7 @@ describe('LOGIN /api/users/login', () => {
       message: 'Please provide email and password!',
     });
   });
+
   it('should get error message if no password provided', async () => {
     const res = await request(app)
       .post('/api/users/login')
@@ -29,6 +30,7 @@ describe('LOGIN /api/users/login', () => {
       message: 'Please provide email and password!',
     });
   });
+
   it('should get error message if password not correct', async () => {
     const res = await request(app)
       .post('/api/users/login')
@@ -36,6 +38,7 @@ describe('LOGIN /api/users/login', () => {
     expect(res.body.message).toMatch(/not.+correct/);
     expect(res.statusCode).toBe(400);
   });
+
   it('should get error message if email not correct', async () => {
     const res = await request(app)
       .post('/api/users/login')
@@ -43,6 +46,7 @@ describe('LOGIN /api/users/login', () => {
     expect(res.body.message).toMatch(/not.+correct/);
     expect(res.statusCode).toBe(400);
   });
+
   it('response should contain data of User if login success', async () => {
     const res = await request(app).post('/api/users/login').send(mockUser);
     expect(res.body.data.user.email).toEqual(mockUser.email);
