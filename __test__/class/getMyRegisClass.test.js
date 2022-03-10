@@ -6,7 +6,7 @@ const helperTest = require('../helper/helperTest');
 
 describe('GET MY REGISTERED CLASS', () => {
   let token;
-  let class_id1;
+  let classId1;
   beforeAll(async () => {
     // create user
     const user = await helperTest.getLoginToken();
@@ -17,11 +17,11 @@ describe('GET MY REGISTERED CLASS', () => {
       mockClass1,
       mockClass2
     );
-    class_id1 = classes.id1;
+    classId1 = classes.id1;
     //register class
     await request(app)
       .post('/api/classes/register')
-      .send({ class_id: class_id1 })
+      .send({ classId: classId1 })
       .set('Authorization', `Bearer ${token}`);
   });
   afterAll(async () => {

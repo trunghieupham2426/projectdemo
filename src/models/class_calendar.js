@@ -9,13 +9,13 @@ module.exports = (sequelize, Sequelize) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Class, { foreignKey: 'class_id' });
-      this.belongsTo(models.Calendar, { foreignKey: 'calendar_id' });
+      this.belongsTo(models.Class, { foreignKey: 'classId' });
+      this.belongsTo(models.Calendar, { foreignKey: 'calendarId' });
     }
   }
   Class_Calendar.init(
     {
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
           key: 'id',
         },
       },
-      calendar_id: {
+      calendarId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

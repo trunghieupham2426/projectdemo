@@ -26,19 +26,20 @@ describe('CREATE CALENDAR', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.data).toHaveProperty('day_of_week');
-    expect(res.body.data).toHaveProperty('open_time');
-    expect(res.body.data).toHaveProperty('close_time');
+    expect(res.body.data).toHaveProperty('dayOfWeek');
+    expect(res.body.data).toHaveProperty('openTime');
+    expect(res.body.data).toHaveProperty('closeTime');
   });
 
   it('should return error if open time or close time fail validate', async () => {
     //format time 'hh:mm'
     const res = await request(app)
       .post('/api/classes/calendar')
-      .send({ ...mockCalendar2, open_time: '8:00', close_time: '10:00' })
+      .send({ ...mockCalendar2, openTime: '8:00', closeTime: '10:00' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
+    expect(res.statusCode).toBe(400);
     expect(res.body.message).toMatch(/fails to match/);
   });
 
@@ -46,10 +47,11 @@ describe('CREATE CALENDAR', () => {
     //format time 'hh:mm'
     const res = await request(app)
       .post('/api/classes/calendar')
-      .send({ ...mockCalendar2, open_time: '18:00', close_time: '10:00' })
+      .send({ ...mockCalendar2, openTime: '18:00', closeTime: '10:00' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
-    expect(res.body.message).toMatch(/close_time must greater than open_time/);
+    expect(res.body.status).toBe('fail');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/closeTime must greater than openTime/);
   });
 });

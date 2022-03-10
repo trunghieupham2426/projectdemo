@@ -12,8 +12,8 @@ const adminSeed = {
 describe('VIEW USER IN CLASS', () => {
   let adminToken;
   let userToken;
-  let class_id1;
-  let class_id2;
+  let classId1;
+  let classId2;
   beforeAll(async () => {
     //login with admin account
     const admin = await request(app).post('/api/users/login').send(adminSeed);
@@ -27,12 +27,12 @@ describe('VIEW USER IN CLASS', () => {
       mockClass1,
       mockClass2
     );
-    class_id1 = classes.id1;
-    class_id2 = classes.id2;
+    classId1 = classes.id1;
+    classId2 = classes.id2;
     // create registered class
     await request(app)
       .post('/api/classes/register')
-      .send({ class_id: class_id1 })
+      .send({ classId: classId1 })
       .set('Authorization', `Bearer ${userToken}`);
   });
   afterAll(async () => {
@@ -43,7 +43,7 @@ describe('VIEW USER IN CLASS', () => {
 
   it('should return all user of class', async () => {
     const res = await request(app)
-      .get(`/api/classes/viewUser/${class_id1}`)
+      .get(`/api/classes/viewUser/${classId1}`)
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.statusCode).toBe(200);
@@ -51,7 +51,7 @@ describe('VIEW USER IN CLASS', () => {
     expect(res.body.data.Users[0]).toHaveProperty('email', mockUser.email);
   });
 
-  it('should return 404 if user dont provide class_id', async () => {
+  it('should return 404 if user dont provide classId', async () => {
     const res = await request(app)
       .get(`/api/classes/viewUser/`)
       .set('Authorization', `Bearer ${adminToken}`);
@@ -61,7 +61,7 @@ describe('VIEW USER IN CLASS', () => {
 
   it('should return empty if no user in class', async () => {
     const res = await request(app)
-      .get(`/api/classes/viewUser/${class_id2}`)
+      .get(`/api/classes/viewUser/${classId2}`)
       .set('Authorization', `Bearer ${adminToken}`);
     expect(res.body.data.Users).toHaveLength(0); // no user
   });

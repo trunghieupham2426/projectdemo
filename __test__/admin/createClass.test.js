@@ -24,29 +24,32 @@ describe('CREATE CLASS', () => {
       .post('/api/classes/')
       .send(mockClass2)
       .set('Authorization', `Bearer ${token}`);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.data).toHaveProperty('id');
-    expect(res.body.data).toHaveProperty('subject');
-    expect(res.body.data).toHaveProperty('status');
+    expect(res.body.data).toHaveProperty('subject', mockClass2.subject);
+    expect(res.body.data).toHaveProperty('status', mockClass2.status);
   });
 
   it('should return error if create class that has start_date smaller than current date', async () => {
     const res = await request(app)
       .post('/api/classes/')
-      .send({ ...mockClass2, start_date: '2021-02-01' })
+      .send({ ...mockClass2, startDate: '2021-02-01' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
     expect(res.body.message).toMatch(/greater than today/);
+    expect(res.statusCode).toBe(400);
   });
-  it('should return error if end_date fail validate', async () => {
+  it('should return error if endDate fail validate', async () => {
     const res = await request(app)
       .post('/api/classes/')
-      .send({ ...mockClass2, end_date: '2021-02-01' })
+      .send({ ...mockClass2, endDate: '2021-02-01' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
-    expect(res.body.message).toMatch(/greater than start_date/);
+    expect(res.body.status).toBe('fail');
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/greater than startDate/);
   });
 
   it('should return error if forgot provide the subject for class', async () => {
@@ -54,7 +57,8 @@ describe('CREATE CLASS', () => {
       .post('/api/classes/')
       .send({ ...mockClass2, subject: '' })
       .set('Authorization', `Bearer ${token}`);
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
+    expect(res.statusCode).toBe(400);
     expect(res.body.message).toMatch(/not allowed .+ empty/);
   });
 });

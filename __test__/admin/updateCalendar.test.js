@@ -11,7 +11,7 @@ const adminSeed = {
 
 describe('UPDATE CALENDAR', () => {
   let token;
-  let calendar_id1;
+  let calendarId1;
   beforeAll(async () => {
     //login with admin account
     const res = await request(app).post('/api/users/login').send(adminSeed);
@@ -22,7 +22,7 @@ describe('UPDATE CALENDAR', () => {
       mockCalendar1,
       mockCalendar2
     );
-    calendar_id1 = calendar.id1;
+    calendarId1 = calendar.id1;
   });
   afterAll(async () => {
     await Calendar.destroy({ where: {} });
@@ -31,29 +31,31 @@ describe('UPDATE CALENDAR', () => {
   it('should return error if open time or close time fail validate', async () => {
     //format time 'hh:mm'
     const res = await request(app)
-      .patch(`/api/classes/calendar/${calendar_id1}`)
-      .send({ open_time: '8:00' })
+      .patch(`/api/classes/calendar/${calendarId1}`)
+      .send({ openTime: '8:00' })
       .set('Authorization', `Bearer ${token}`);
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
     expect(res.body.message).toMatch(/fails to match/);
+    expect(res.statusCode).toBe(400);
   });
 
   it('should return error if open time smaller than close time', async () => {
     //format time 'hh:mm'
     const res = await request(app)
-      .patch(`/api/classes/calendar/${calendar_id1}`)
-      .send({ open_time: '18:00', close_time: '10:00' })
+      .patch(`/api/classes/calendar/${calendarId1}`)
+      .send({ openTime: '18:00', closeTime: '10:00' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
-    expect(res.body.message).toMatch(/close_time must greater than open_time/);
+    expect(res.body.status).toBe('fail');
+    expect(res.body.message).toMatch(/closeTime must greater than openTime/);
+    expect(res.statusCode).toBe(400);
   });
 
-  it('should return 404 if calendar_id not correct', async () => {
-    const calendar_id = 0;
+  it('should return 404 if calendarId not correct', async () => {
+    const calendarId = 0;
     const res = await request(app)
-      .patch(`/api/classes/calendar/${calendar_id}`)
-      .send({ open_time: '08:00' })
+      .patch(`/api/classes/calendar/${calendarId}`)
+      .send({ openTime: '08:00' })
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(404);
@@ -62,11 +64,11 @@ describe('UPDATE CALENDAR', () => {
 
   it('should return 200 if update calendar successfully', async () => {
     const res = await request(app)
-      .patch(`/api/classes/calendar/${calendar_id1}`)
-      .send({ day_of_week: 'sat' })
+      .patch(`/api/classes/calendar/${calendarId1}`)
+      .send({ dayOfWeek: 'sat' })
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.data).toHaveProperty('day_of_week', 'sat');
+    expect(res.body.data).toHaveProperty('dayOfWeek', 'sat');
   });
 });

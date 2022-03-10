@@ -7,8 +7,8 @@ const helperTest = require('../helper/helperTest');
 
 describe('User register class', () => {
   let token;
-  let class_id1;
-  let class_id2;
+  let classId1;
+  let classId2;
   beforeAll(async () => {
     const user = await helperTest.getLoginToken();
     token = user.token;
@@ -18,8 +18,8 @@ describe('User register class', () => {
       mockClass1,
       mockClass2
     );
-    class_id1 = classes.id1;
-    class_id2 = classes.id2;
+    classId1 = classes.id1;
+    classId2 = classes.id2;
   });
   afterAll(async () => {
     await Regis.destroy({ where: {} });
@@ -33,7 +33,7 @@ describe('User register class', () => {
     it('should return error msg if the class not open', async () => {
       const res = await request(app)
         .post('/api/classes/register')
-        .send({ class_id: class_id2 })
+        .send({ classId: classId2 })
         .set('Authorization', `Bearer ${token}`);
 
       expect(res.statusCode).toBe(404);
@@ -44,7 +44,7 @@ describe('User register class', () => {
       const sendEmailMock = jest.spyOn(helperFn, 'sendEmail');
       const res = await request(app)
         .post('/api/classes/register')
-        .send({ class_id: class_id1 })
+        .send({ classId: classId1 })
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toEqual(200);
       expect(sendEmailMock).toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe('User register class', () => {
     it('should return statusCode 400 if user register class 2 times', async () => {
       const res = await request(app)
         .post('/api/classes/register')
-        .send({ class_id: class_id1 })
+        .send({ classId: classId1 })
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toEqual(400);
     });
@@ -65,20 +65,20 @@ describe('User register class', () => {
     beforeAll(async () => {
       await request(app)
         .post('/api/classes/register')
-        .send({ class_id: class_id1 })
+        .send({ classId: classId1 })
         .set('Authorization', `Bearer ${token}`);
     });
 
     it('should return 200 if user cancel class is pending', async () => {
       const res = await request(app)
-        .patch(`/api/classes/${class_id1}/cancel`)
+        .patch(`/api/classes/${classId1}/cancel`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
     });
 
     it('should return 400 if user cancel class is not pending', async () => {
       const res = await request(app)
-        .patch(`/api/classes/${class_id2}/cancel`)
+        .patch(`/api/classes/${classId2}/cancel`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(400);
     });

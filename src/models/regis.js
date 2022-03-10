@@ -9,13 +9,13 @@ module.exports = (sequelize, Sequelize) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Class, { foreignKey: 'class_id' });
-      this.belongsTo(models.User, { foreignKey: 'user_id' });
+      this.belongsTo(models.Class, { foreignKey: 'classId' });
+      this.belongsTo(models.User, { foreignKey: 'userId' });
     }
   }
   Regis.init(
     {
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
           key: 'id',
         },
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -36,10 +36,10 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: 'pending',
         allowNull: false,
       },
-      regis_date: {
+      regisDate: {
         type: Sequelize.DATE,
       },
-      adm_action: {
+      admAction: {
         type: Sequelize.ENUM('accept', 'reject'),
       },
     },

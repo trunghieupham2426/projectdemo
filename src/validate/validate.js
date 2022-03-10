@@ -47,46 +47,46 @@ const updateMeSchema = Joi.object({
 
 const classSchema = Joi.object({
   subject: Joi.string().empty(),
-  max_student: Joi.number().empty(),
-  start_date: Joi.date(),
-  end_date: Joi.date(),
+  maxStudent: Joi.number().empty(),
+  startDate: Joi.date(),
+  endDate: Joi.date(),
   status: Joi.string().valid('open', 'close', 'pending').default('pending'),
 }).custom((obj, helper) => {
-  const { end_date, start_date } = obj;
-  if (new Date(start_date) > new Date(end_date)) {
-    throw new Error('end_date must be greater than start_date');
+  const { endDate, startDate } = obj;
+  if (new Date(startDate) > new Date(endDate)) {
+    throw new Error('endDate must be greater than startDate');
   }
-  if (new Date(start_date) < new Date()) {
-    throw new Error('start_date must be greater than today');
+  if (new Date(startDate) < new Date()) {
+    throw new Error('startDate must be greater than today');
   }
   return obj;
 });
 
 const calendarSchema = Joi.object({
-  day_of_week: Joi.string().empty(),
-  open_time: Joi.string()
+  dayOfWeek: Joi.string().empty(),
+  openTime: Joi.string()
     .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
-    .empty(),
-  close_time: Joi.string()
-    .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
-    .error(new Error('invalid time , please use this format HH:MM'))
     .empty()
-    .error(new Error('invalid time, please use this format HH:MM')),
+    .error(new AppError('invalid time , please use this format HH:MM', 400)),
+  closeTime: Joi.string()
+    .regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+    .empty()
+    .error(new AppError('invalid time , please use this format HH:MM', 400)),
 }).custom((obj, helper) => {
-  const { open_time, close_time } = obj;
-  if (close_time < open_time) {
-    throw new Error('close_time must greater than open_time');
+  const { openTime, closeTime } = obj;
+  if (closeTime < openTime) {
+    throw new Error('closeTime must greater than openTime');
   }
 });
 
 exports.classIdValidate = async (req, res, next) => {
   try {
     await Joi.object({
-      class_id: Joi.string()
+      classId: Joi.string()
         .required()
         .trim()
         .empty()
-        .error(new AppError('class_id is required and not empty', 401)),
+        .error(new AppError('classId is required and not empty', 400)),
     }).validateAsync(req.body);
     next();
   } catch (err) {

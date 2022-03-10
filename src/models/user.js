@@ -11,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
     static associate(models) {
       this.belongsToMany(models.Class, {
         through: 'Regis',
-        foreignKey: 'user_id',
-        otherKey: 'class_id',
+        foreignKey: 'userId',
+        otherKey: 'classId',
       });
     }
   }
@@ -51,7 +51,7 @@ module.exports = (sequelize, Sequelize) => {
       age: {
         type: Sequelize.INTEGER,
       },
-      avatar_path: {
+      avatarPath: {
         type: Sequelize.STRING,
         defaultValue:
           'https://res.cloudinary.com/dyw35assc/image/upload/v1644906261/DEV/default_gphmz1.png',

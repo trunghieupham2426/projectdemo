@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Calendars', {
@@ -8,15 +7,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      day_of_week: {
+      dayOfWeek: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      open_time: {
+      openTime: {
         type: Sequelize.TIME,
         allowNull: false,
       },
-      close_time: {
+      closeTime: {
         type: Sequelize.TIME,
         allowNull: false,
       },

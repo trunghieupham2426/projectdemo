@@ -15,8 +15,8 @@ const adminSeed = {
 };
 describe('Update Class', () => {
   let token;
-  let class_id2;
-  let calendar_id1;
+  let classId2;
+  let calendarId1;
   beforeAll(async () => {
     //login with admin account
     const res = await request(app).post('/api/users/login').send(adminSeed);
@@ -27,14 +27,14 @@ describe('Update Class', () => {
       mockClass1,
       mockClass2
     );
-    class_id2 = classes.id2;
+    classId2 = classes.id2;
     //setup calendar
     const calendars = await helperTest.createMockModel(
       Calendar,
       mockCalendar1,
       mockCalendar2
     );
-    calendar_id1 = calendars.id1;
+    calendarId1 = calendars.id1;
   });
   afterAll(async () => {
     await Class_Calendar.destroy({ where: {} });
@@ -45,7 +45,7 @@ describe('Update Class', () => {
   it('should return 200 if assign calendar for class successfully', async () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
-      .send({ class_id: class_id2, calendar_id: calendar_id1 })
+      .send({ classId: classId2, calendarId: calendarId1 })
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
@@ -55,25 +55,25 @@ describe('Update Class', () => {
   it('should return error msg if assign calendar for class 2 times', async () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
-      .send({ class_id: class_id2, calendar_id: calendar_id1 })
+      .send({ classId: classId2, calendarId: calendarId1 })
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(400);
     expect(res.body.status).toBe('fail');
   });
 
-  it('should return 404 if class_id is empty', async () => {
+  it('should return 404 if classId is empty', async () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
-      .send({ class_id: '', calendar_id: calendar_id1 })
+      .send({ classId: '', calendarId: calendarId1 })
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.status).toBe('fail');
   });
 
-  it('should return 404 if calendar_id is empty', async () => {
+  it('should return 404 if calendarId is empty', async () => {
     const res = await request(app)
       .post('/api/classes/classCalendar')
-      .send({ class_id: class_id2, calendar_id: '' })
+      .send({ classId: classId2, calendarId: '' })
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.status).toBe('fail');

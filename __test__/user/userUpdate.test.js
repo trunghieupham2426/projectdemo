@@ -70,9 +70,7 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         .field('phone', 999999999);
       expect(res.statusCode).toBe(200);
       expect(res.body.status).toBe('success');
-      expect(res.body.data).toHaveProperty('age');
-      expect(res.body.data).toHaveProperty('phone');
-      expect(res.body.data).toHaveProperty('avatar_path');
+      expect(res.body.data).toHaveProperty('age', '20');
     });
 
     it('should return error message if insert field not allow to change EMAIL , PASSWORD ...', async () => {
@@ -81,8 +79,9 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         .set('Content-Type', 'multipart/form-data')
         .set('Authorization', `Bearer ${token}`)
         .field('email', 'changeEmail@gmail.com');
-      expect(res.body.status).toBe('error');
+      expect(res.body.status).toBe('fail');
       expect(res.body.message).toMatch(/not allowed/);
+      expect(res.statusCode).toBe(400);
     });
 
     it('should return error if insert field not pass validate', async () => {
@@ -91,7 +90,8 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         .set('Content-Type', 'multipart/form-data')
         .set('Authorization', `Bearer ${token}`)
         .field('phone', 'random string');
-      expect(res.body.status).toBe('error');
+      expect(res.body.status).toBe('fail');
+      expect(res.statusCode).toBe(400);
     });
 
     it('should return error if upload file not the image', async () => {

@@ -11,7 +11,7 @@ const adminSeed = {
 };
 describe('Update Class', () => {
   let token;
-  let class_id1;
+  let classId1;
 
   beforeAll(async () => {
     //login with admin account
@@ -23,16 +23,16 @@ describe('Update Class', () => {
       mockClass1,
       mockClass2
     );
-    class_id1 = classes.id1;
+    classId1 = classes.id1;
   });
   afterAll(async () => {
     await Class.destroy({ where: {} });
   });
 
-  it('should return 404 if class_id not correct', async () => {
-    const class_id = 0;
+  it('should return 404 if classId not correct', async () => {
+    const classId = 0;
     const res = await request(app)
-      .patch(`/api/classes/${class_id}`)
+      .patch(`/api/classes/${classId}`)
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
   });
@@ -40,46 +40,49 @@ describe('Update Class', () => {
   it('should return 200 if update  class successfully', async () => {
     const data = {
       subject: 'JAVA',
-      start_date: '2023-01-02',
-      end_date: '2023-03-04',
+      startDate: '2023-02-02',
+      endDate: '2023-03-04',
     };
     const res = await request(app)
-      .patch(`/api/classes/${class_id1}`)
+      .patch(`/api/classes/${classId1}`)
       .send(data)
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.data).toHaveProperty('subject', data.subject);
-    expect(res.body.data).toHaveProperty('start_date', data.start_date);
-    expect(res.body.data).toHaveProperty('end_date', data.end_date);
+    expect(res.body.data).toHaveProperty('startDate', data.startDate);
+    expect(res.body.data).toHaveProperty('endDate', data.endDate);
   });
 
   it('should return error if update with empty value', async () => {
     const res = await request(app)
-      .patch(`/api/classes/${class_id1}`)
+      .patch(`/api/classes/${classId1}`)
       .send({ subject: '' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
     expect(res.body.message).toMatch(/not allowed .+ empty/);
+    expect(res.statusCode).toBe(400);
   });
 
-  it('should return error if start_date fail validate', async () => {
+  it('should return error if startDate fail validate', async () => {
     const res = await request(app)
-      .patch(`/api/classes/${class_id1}`)
-      .send({ start_date: '2021-02-01' })
+      .patch(`/api/classes/${classId1}`)
+      .send({ startDate: '2021-02-01' })
       .set('Authorization', `Bearer ${token}`);
 
-    expect(res.body.status).toBe('error');
+    expect(res.body.status).toBe('fail');
     expect(res.body.message).toMatch(/greater than today/);
+    expect(res.statusCode).toBe(400);
   });
 
-  it('should return error if end_date fail validate', async () => {
+  it('should return error if endDate fail validate', async () => {
     const res = await request(app)
-      .patch(`/api/classes/${class_id1}`)
-      .send({ start_date: '2022-06-01', end_date: '2022-05-10' })
+      .patch(`/api/classes/${classId1}`)
+      .send({ startDate: '2022-06-01', endDate: '2022-05-10' })
       .set('Authorization', `Bearer ${token}`);
-    expect(res.body.status).toBe('error');
-    expect(res.body.message).toMatch(/greater than start_date/);
+    expect(res.body.status).toBe('fail');
+    expect(res.body.message).toMatch(/greater than startDate/);
+    expect(res.statusCode).toBe(400);
   });
 });

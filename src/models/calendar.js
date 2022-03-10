@@ -11,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
       // define association here
       this.belongsToMany(models.Class, {
         through: 'Class_Calendar',
-        foreignKey: 'calendar_id',
-        otherKey: 'class_id',
+        foreignKey: 'calendarId',
+        otherKey: 'classId',
       });
     }
   }
@@ -24,23 +24,25 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      day_of_week: {
+      dayOfWeek: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      open_time: {
+      openTime: {
         type: Sequelize.TIME,
         allowNull: false,
-        // validate: {
-        //   isSmallerThanCloseTime(value) {
-        //     if (value > this.close_time)
-        //       throw new Error('open_time must be smaller than close_time');
-        //   },
-        // },
+        validate: {
+          notNull: { msg: 'openTime is required' },
+          // notEmpty: { msg: 'openTime must not be empty' },
+        },
       },
-      close_time: {
+      closeTime: {
         type: Sequelize.TIME,
         allowNull: false,
+        validate: {
+          notNull: { msg: 'closeTime is required' },
+          // notEmpty: { msg: 'closeTime must not be empty' },
+        },
       },
     },
     {

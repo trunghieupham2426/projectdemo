@@ -8,9 +8,9 @@ const Op = Sequelize.Op;
 
 //  for user and admin
 const registerClass = catchAsync(async (req, res, next) => {
-  const { class_id } = req.body;
-  const user_id = req.user.id;
-  const currentClass = await Class.findOne({ where: { id: class_id } });
+  const { classId } = req.body;
+  const userId = req.user.id;
+  const currentClass = await Class.findOne({ where: { id: classId } });
   if (!currentClass || currentClass.status !== 'open') {
     return next(
       new AppError(
@@ -19,12 +19,12 @@ const registerClass = catchAsync(async (req, res, next) => {
       )
     );
   }
-  const currentRegis = await Regis.findOne({ where: { class_id, user_id } });
+  const currentRegis = await Regis.findOne({ where: { classId, userId } });
 
   if (currentRegis) {
     return next(new AppError('you  already register this class', 400));
   }
-  await Regis.create({ class_id, user_id });
+  await Regis.create({ classId, userId });
   helperFn.sendEmail(
     req.user.email,
     'THANK YOU FOR REGISTER CLASS',
@@ -37,10 +37,10 @@ const registerClass = catchAsync(async (req, res, next) => {
 });
 
 const cancelRegisClass = catchAsync(async (req, res, next) => {
-  const class_id = req.params.id;
-  const user_id = req.user.id;
+  const classId = req.params.id;
+  const userId = req.user.id;
   const cancelClass = await Regis.findOne({
-    where: { class_id: class_id, user_id: user_id, status: 'pending' },
+    where: { classId, userId, status: 'pending' },
   });
   if (!cancelClass) {
     return next(new AppError(`this class already cancel or not pending`, 400));
@@ -87,10 +87,10 @@ const getMyRegisClass = catchAsync(async (req, res, next) => {
   if (!userFilter) {
     userFilter = defaultFilter;
   }
-  const user_id = req.user.id;
+  const userId = req.user.id;
   const myClass = await Regis.findAll({
     where: {
-      user_id: user_id,
+      userId: userId,
       status: {
         [Op.in]: userFilter,
       },
@@ -107,16 +107,16 @@ const getMyRegisClass = catchAsync(async (req, res, next) => {
 });
 
 const getCalendarClass = catchAsync(async (req, res, next) => {
-  const class_id = req.query.class;
-  if (!class_id) {
+  const classId = req.query.class;
+  if (!classId) {
     return next(new AppError('please provide class id', 400));
   }
   const currentCLass = await Class.findOne({
-    where: { id: class_id },
-    attributes: ['subject', 'start_date', 'end_date'],
+    where: { id: classId },
+    attributes: ['subject', 'startDate', 'endDate'],
     include: {
       model: Calendar,
-      attributes: ['day_of_week', 'open_time', 'close_time'],
+      attributes: ['dayOfWeek', 'openTime', 'closeTime'],
       through: {
         attributes: [], // dont get data from junction table
       },

@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Classes', {
@@ -13,11 +12,11 @@ module.exports = {
         defaultValue: 'pending',
         allowNull: false,
       },
-      max_student: {
+      maxStudent: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      current_student: {
+      currentStudent: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -26,11 +25,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      start_date: {
+      startDate: {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      end_date: {
+      endDate: {
         type: Sequelize.DATE,
         allowNull: false,
       },

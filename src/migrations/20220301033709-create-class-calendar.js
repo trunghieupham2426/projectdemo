@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Class_Calendars', {
@@ -8,7 +7,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -16,7 +15,7 @@ module.exports = {
           key: 'id',
         },
       },
-      calendar_id: {
+      calendarId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

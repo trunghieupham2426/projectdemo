@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Class_Users', {
@@ -8,7 +7,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -16,23 +15,13 @@ module.exports = {
           key: 'id',
         },
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'Users',
           key: 'id',
         },
-      },
-      createdAt: {
-        field: 'created_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
-      },
-      updatedAt: {
-        field: 'updated_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
       },
     });
   },

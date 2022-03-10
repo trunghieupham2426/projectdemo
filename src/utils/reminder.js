@@ -16,7 +16,7 @@ const reminder = async () => {
       helperFn.sendEmail(
         el.email,
         'Reminder',
-        `Your ${el.subject} class open on ${el.start_date} `
+        `Your ${el.subject} class open on ${el.startDate} `
       );
     });
   } catch (err) {

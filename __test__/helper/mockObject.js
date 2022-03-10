@@ -6,43 +6,43 @@ const mockUser = {
 };
 
 const mockClass1 = {
-  max_student: 1,
+  maxStudent: 1,
   subject: 'HTML',
   status: 'open',
-  start_date: '2023-02-25',
-  end_date: '2023-05-25',
+  startDate: '2023-02-25',
+  endDate: '2023-05-25',
 };
 const mockClass2 = {
-  max_student: 2,
+  maxStudent: 2,
   status: 'pending',
   subject: 'JAVA',
-  start_date: '2023-02-15',
-  end_date: '2023-05-15',
+  startDate: '2023-02-15',
+  endDate: '2023-05-15',
 };
 const mockClass3 = {
-  max_student: 4,
+  maxStudent: 4,
   subject: 'JS',
   status: 'open',
-  start_date: '2023-05-25',
-  end_date: '2023-08-25',
+  startDate: '2023-05-25',
+  endDate: '2023-08-25',
 };
 const mockClass4 = {
-  max_student: 10,
+  maxStudent: 10,
   subject: 'RUBY',
   status: 'open',
-  start_date: '2023-06-20',
-  end_date: '2023-08-25',
+  startDate: '2023-06-20',
+  endDate: '2023-08-25',
 };
 const mockCalendar1 = {
-  day_of_week: 'mon',
-  open_time: '08:00',
-  close_time: '10:00',
+  dayOfWeek: 'mon',
+  openTime: '08:00',
+  closeTime: '10:00',
 };
 
 const mockCalendar2 = {
-  day_of_week: 'tue',
-  open_time: '18:00',
-  close_time: '20:00',
+  dayOfWeek: 'tue',
+  openTime: '18:00',
+  closeTime: '20:00',
 };
 
 module.exports = {

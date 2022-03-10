@@ -23,7 +23,7 @@ const updateMe = catchAsync(async (req, res, next) => {
       public_id: req.file.filename, // define filename
       folder: isTest ? 'DEVtest' : 'DEV',
     });
-    user.avatar_path = await img.url;
+    user.avatarPath = await img.url;
   }
   if (phone) user.phone = phone;
   if (age) user.age = age;
@@ -83,7 +83,7 @@ const login = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('your email not correct', 400));
   }
-  const { email, password, isActive, countLogin, avatar_path, username, id } =
+  const { email, password, isActive, countLogin, avatarPath, username, id } =
     user;
   if (countLogin >= 3 || !isActive) {
     return next(
@@ -110,7 +110,7 @@ const login = catchAsync(async (req, res, next) => {
       user: {
         email: email,
         username: username,
-        avatar_path: avatar_path,
+        avatarPath: avatarPath,
         id: id,
       },
     },

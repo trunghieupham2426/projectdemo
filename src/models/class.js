@@ -13,13 +13,13 @@ module.exports = (sequelize, Sequelize) => {
     static associate(models) {
       this.belongsToMany(models.User, {
         through: 'Regis',
-        foreignKey: 'class_id',
-        otherKey: 'user_id',
+        foreignKey: 'classId',
+        otherKey: 'userId',
       });
       this.belongsToMany(models.Calendar, {
         through: 'Class_Calendar',
-        foreignKey: 'class_id',
-        otherKey: 'calendar_id',
+        foreignKey: 'classId',
+        otherKey: 'calendarId',
       });
     }
   }
@@ -36,14 +36,14 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: 'pending',
         allowNull: false,
       },
-      max_student: {
+      maxStudent: {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
-          notNull: { msg: 'max_student is required' },
+          notNull: { msg: 'maxStudent is required' },
         },
       },
-      current_student: {
+      currentStudent: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -56,18 +56,18 @@ module.exports = (sequelize, Sequelize) => {
           notEmpty: { msg: 'subject must not be empty' },
         },
       },
-      start_date: {
+      startDate: {
         type: Sequelize.DATE,
         allowNull: false,
         get() {
-          return moment(this.getDataValue('start_date')).format('YYYY-MM-DD');
+          return moment(this.getDataValue('startDate')).format('YYYY-MM-DD');
         },
       },
-      end_date: {
+      endDate: {
         type: Sequelize.DATE,
         allowNull: false,
         get() {
-          return moment(this.getDataValue('end_date')).format('YYYY-MM-DD');
+          return moment(this.getDataValue('endDate')).format('YYYY-MM-DD');
         },
       },
     },

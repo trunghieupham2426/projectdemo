@@ -8,8 +8,8 @@ module.exports = (sequelize, Sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsTo(models.Class, { foreignKey: 'class_id' });
-      this.belongsTo(models.User, { foreignKey: 'user_id' });
+      this.belongsTo(models.Class, { foreignKey: 'classId' });
+      this.belongsTo(models.User, { foreignKey: 'userId' });
     }
   }
   Class_Users.init(
@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
           key: 'id',
         },
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Regis', {
@@ -8,7 +7,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      class_id: {
+      classId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -16,7 +15,7 @@ module.exports = {
           key: 'id',
         },
       },
-      user_id: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -29,22 +28,12 @@ module.exports = {
         defaultValue: 'pending',
         allowNull: false,
       },
-      regis_date: {
+      regisDate: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
-      adm_action: {
+      admAction: {
         type: Sequelize.ENUM('accept', 'reject'),
-      },
-      createdAt: {
-        field: 'created_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
-      },
-      updatedAt: {
-        field: 'updated_at',
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('now'),
       },
     });
   },

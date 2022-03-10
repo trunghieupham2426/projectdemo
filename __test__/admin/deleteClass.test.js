@@ -11,7 +11,7 @@ const adminSeed = {
 };
 describe('DELETE CLASS', () => {
   let token;
-  let class_id1;
+  let classId1;
   beforeAll(async () => {
     //login with admin account
     const res = await request(app).post('/api/users/login').send(adminSeed);
@@ -22,24 +22,24 @@ describe('DELETE CLASS', () => {
       mockClass1,
       mockClass2
     );
-    class_id1 = classes.id1;
+    classId1 = classes.id1;
   });
   afterAll(async () => {
     await Class.destroy({ where: {} });
   });
 
-  it('should return 404 if class_id not valid', async () => {
-    const class_id = 0;
+  it('should return 404 if classId not valid', async () => {
+    const classId = 0;
     const res = await request(app)
-      .delete(`/api/classes/${class_id}`)
+      .delete(`/api/classes/${classId}`)
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
     expect(res.body.message).toMatch(/no class/i);
   });
 
-  it('should return 200 if class_id is valid', async () => {
+  it('should return 200 if classId is valid', async () => {
     const res = await request(app)
-      .delete(`/api/classes/${class_id1}`)
+      .delete(`/api/classes/${classId1}`)
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('success');

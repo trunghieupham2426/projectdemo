@@ -1,4 +1,3 @@
-'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Users', {
@@ -26,7 +25,7 @@ module.exports = {
       age: {
         type: Sequelize.INTEGER,
       },
-      avatar_path: {
+      avatarPath: {
         type: Sequelize.STRING,
         defaultValue:
           'https://res.cloudinary.com/dyw35assc/image/upload/v1644906261/DEV/default_gphmz1.png',
@@ -44,12 +43,10 @@ module.exports = {
         defaultValue: false,
       },
       createdAt: {
-        field: 'created_at',
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
       updatedAt: {
-        field: 'updated_at',
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
