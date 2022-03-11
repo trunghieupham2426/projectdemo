@@ -2,31 +2,28 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const { User } = require('../models');
 const AppError = require('../utils/ErrorHandler/appError');
+const catchAsync = require('../utils/ErrorHandler/catchAsync');
 
-exports.protectingRoutes = async (req, res, next) => {
-  try {
-    const token =
-      req.headers.authorization?.startsWith('Bearer') &&
-      req.headers.authorization.split(' ')[1];
+exports.protectingRoutes = catchAsync(async (req, res, next) => {
+  const token =
+    req.headers.authorization?.startsWith('Bearer') &&
+    req.headers.authorization.split(' ')[1];
 
-    if (!token || token === 'null') {
-      return next(new AppError('You are not logged in', 401));
-    }
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({
-      attributes: { exclude: ['password', 'countLogin'] },
-      where: { id: decoded.id },
-    });
-    if (!user) {
-      return next(new AppError('this user does not exist', 401));
-    }
-
-    req.user = user;
-    next();
-  } catch (err) {
-    next(new AppError('invalid token', 401));
+  if (!token || token === 'null') {
+    return next(new AppError('You are not logged in', 401));
   }
-};
+  const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+  const user = await User.findOne({
+    attributes: { exclude: ['password', 'countLogin'] },
+    where: { id: decoded.id },
+  });
+  if (!user) {
+    return next(new AppError('this user does not exist', 401));
+  }
+
+  req.user = user;
+  next();
+});
 
 exports.loginLimiter = rateLimit({
   windowMs: 3 * 60 * 1000, // 3 minutes

@@ -101,6 +101,13 @@ const updateCalendar = catchAsync(async (req, res, next) => {
   if (!currentCalendar) {
     return next(new AppError('No calendar found with this id', 404));
   }
+
+  if (
+    currentCalendar.openTime > req.body.closeTime ||
+    req.body.openTime > currentCalendar.closeTime
+  ) {
+    return next(new AppError('openTime must smaller than closeTime'));
+  }
   Object.assign(currentCalendar, req.body);
   currentCalendar.save();
   res.status(200).json({

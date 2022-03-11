@@ -15,34 +15,6 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
   afterAll(async () => {
     await User.destroy({ where: { email: mockUser.email } });
   });
-  describe('update_password', () => {
-    it('should return 200 if update password successfully', async () => {
-      const data = {
-        oldPwd: '123456',
-        newPwd: '123456',
-      };
-
-      const res = await request(app)
-        .patch('/api/users/updateMyPassword')
-        .send(data)
-        .set('Authorization', `Bearer ${token}`);
-      expect(res.statusCode).toBe(200);
-      expect(res.body.status).toBe('success');
-    });
-
-    it('should return 400 and fail message if oldPwd is wrong', async () => {
-      const data = {
-        oldPwd: '1234567',
-        newPwd: 'abcd1234',
-      };
-      const res = await request(app)
-        .patch('/api/users/updateMyPassword')
-        .send(data)
-        .set('Authorization', `Bearer ${token}`);
-      expect(res.statusCode).toBe(400);
-      expect(res.body.status).toBe('fail');
-    });
-  });
   // UPDATE_PROFILE
   describe('update_profile', () => {
     afterAll(async () => {
@@ -100,8 +72,39 @@ describe('UPDATE_PROFILE AND UPDATE_PASSWORD', () => {
         .set('Content-Type', 'multipart/form-data')
         .set('Authorization', `Bearer ${token}`)
         .attach('avatar', '__test__/user/userUpdate.test.js');
-      expect(res.body.status).toBe('error');
+      expect(res.body.status).toBe('fail');
       expect(res.body.message).toMatch(/only images/);
+      expect(res.statusCode).toBe(400);
+    });
+
+    //UPDATE PASSWORD
+
+    describe('update_password', () => {
+      it('should return 400 and fail message if oldPwd is wrong', async () => {
+        const data = {
+          oldPwd: '1234567',
+          newPwd: 'abcd1234',
+        };
+        const res = await request(app)
+          .patch('/api/users/updateMyPassword')
+          .send(data)
+          .set('Authorization', `Bearer ${token}`);
+        expect(res.statusCode).toBe(400);
+        expect(res.body.status).toBe('fail');
+      });
+
+      it('should return 200 if update password successfully', async () => {
+        const data = {
+          oldPwd: '123456',
+          newPwd: '1234567',
+        };
+        const res = await request(app)
+          .patch('/api/users/updateMyPassword')
+          .send(data)
+          .set('Authorization', `Bearer ${token}`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.status).toBe('success');
+      });
     });
   });
 });

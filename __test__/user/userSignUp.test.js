@@ -29,4 +29,20 @@ describe('SIGN UP /api/users/signup', () => {
     expect(res.statusCode).toBe(400);
     expect(res.body).toMatchObject({ message: 'email must be unique' });
   });
+
+  it('should return status code 400 if signup with invalid password', async () => {
+    const res = await request(app)
+      .post('/api/users/signup')
+      .send({ ...signUpObj, password: '12bc' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/invalid password/);
+  });
+
+  it('should return status code 400 if signup with missing username field', async () => {
+    const res = await request(app)
+      .post('/api/users/signup')
+      .send({ email: 'abcde@gmai.com', password: '12bca2' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.message).toMatch(/.* required/);
+  });
 });

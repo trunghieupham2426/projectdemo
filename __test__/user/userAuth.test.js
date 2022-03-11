@@ -27,7 +27,7 @@ describe('Authentication', () => {
       .get('/api/classes')
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toEqual(401);
-    expect(res.body.message).toBe('invalid token');
+    expect(res.body.message).toMatch(/invalid token/i);
   });
 
   it('should return 401 if no token is provided', async () => {

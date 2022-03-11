@@ -25,4 +25,13 @@ describe('GET LIST CLASS', () => {
     expect(res.body.data[0]).toHaveProperty('subject', 'HTML');
     expect(res.body.data[0]).toHaveProperty('status', 'open');
   });
+
+  it('should get all class filter by status', async () => {
+    const res = await request(app)
+      .get('/api/classes?status=pending')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.data).not.toHaveLength(0);
+    expect(res.body.data[0]).toHaveProperty('status', 'pending');
+  });
 });

@@ -40,7 +40,7 @@ describe('CREATE CALENDAR', () => {
 
     expect(res.body.status).toBe('fail');
     expect(res.statusCode).toBe(400);
-    expect(res.body.message).toMatch(/fails to match/);
+    expect(res.body.message).toMatch(/invalid time/);
   });
 
   it('should return error if open time smaller than close time', async () => {

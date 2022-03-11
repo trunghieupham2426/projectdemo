@@ -35,7 +35,7 @@ describe('UPDATE CALENDAR', () => {
       .send({ openTime: '8:00' })
       .set('Authorization', `Bearer ${token}`);
     expect(res.body.status).toBe('fail');
-    expect(res.body.message).toMatch(/fails to match/);
+    expect(res.body.message).toMatch(/invalid time/);
     expect(res.statusCode).toBe(400);
   });
 

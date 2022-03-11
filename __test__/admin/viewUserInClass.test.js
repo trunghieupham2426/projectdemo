@@ -51,12 +51,13 @@ describe('VIEW USER IN CLASS', () => {
     expect(res.body.data.Users[0]).toHaveProperty('email', mockUser.email);
   });
 
-  it('should return 404 if user dont provide classId', async () => {
+  it('should return 404 if user provide classId not correct', async () => {
     const res = await request(app)
-      .get(`/api/classes/viewUser/`)
+      .get(`/api/classes/viewUser/0`)
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.statusCode).toBe(404);
+    expect(res.body.message).toMatch(/classId not correct/i);
   });
 
   it('should return empty if no user in class', async () => {

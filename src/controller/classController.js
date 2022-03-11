@@ -81,7 +81,7 @@ const getAllClass = catchAsync(async (req, res, next) => {
 });
 
 const getMyRegisClass = catchAsync(async (req, res, next) => {
-  //127.0.0.1:5000/api/classes/myRegisteredClass?status=pending,active,cancel
+  //127.0.0.1:5000/api/classes/myClass?status=pending,active,cancel
   const defaultFilter = ['pending', 'active', 'cancel'];
   let userFilter = req.query.status?.split(',');
   if (!userFilter) {

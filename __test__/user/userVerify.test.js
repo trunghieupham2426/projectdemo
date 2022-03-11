@@ -36,7 +36,8 @@ describe('Verify User Email', () => {
   it('should return error if token expired', async () => {
     verifyToken = helperFn.generaToken({ email: signUpObj.email }, '0s');
     const res = await request(app).get(`/api/users/verify/${verifyToken}`);
-    expect(res.body.status).toBe('error');
-    expect(res.body.message).toBe('jwt expired');
+    expect(res.body.status).toBe('fail');
+    expect(res.statusCode).toBe(401);
+    expect(res.body.message).toMatch(/token has expired/i);
   });
 });

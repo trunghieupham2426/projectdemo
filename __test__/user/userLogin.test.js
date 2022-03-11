@@ -39,16 +39,38 @@ describe('LOGIN /api/users/login', () => {
     expect(res.statusCode).toBe(400);
   });
 
+  it('response should contain data of User if login success', async () => {
+    const res = await request(app).post('/api/users/login').send(mockUser);
+    expect(res.body.data.user.email).toEqual(mockUser.email);
+  });
+
+  it('should block user if their password not correct 3 time', async () => {
+    //request login 3 time with wrong password
+    await request(app)
+      .post('/api/users/login')
+      .send({ ...mockUser, password: 'wrong123' });
+    await request(app)
+      .post('/api/users/login')
+      .send({ ...mockUser, password: 'wrong123' });
+    await request(app)
+      .post('/api/users/login')
+      .send({ ...mockUser, password: 'wrong123' });
+    // result
+    const res = await request(app)
+      .post('/api/users/login')
+      .send({ ...mockUser, password: 'wrong123' });
+
+    expect(res.body.message).toMatch(
+      /your account has been disabled or not active yet/
+    );
+    expect(res.statusCode).toBe(400);
+  });
+
   it('should get error message if email not correct', async () => {
     const res = await request(app)
       .post('/api/users/login')
       .send({ email: 'EmailNotExist@gmail.com', password: '123456' });
     expect(res.body.message).toMatch(/not.+correct/);
     expect(res.statusCode).toBe(400);
-  });
-
-  it('response should contain data of User if login success', async () => {
-    const res = await request(app).post('/api/users/login').send(mockUser);
-    expect(res.body.data.user.email).toEqual(mockUser.email);
   });
 });

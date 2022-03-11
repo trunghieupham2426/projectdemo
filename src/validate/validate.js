@@ -30,7 +30,11 @@ const signUpValidateSchema = Joi.object({
 
   password: Joi.string()
     .regex(/^[a-zA-Z0-9]{6,30}$/)
-    .required(),
+    .required()
+    .error(
+      new AppError('invalid password , must contain at least 6 characters', 400)
+    ),
+
   email: Joi.string()
     .email({
       minDomainSegments: 2,

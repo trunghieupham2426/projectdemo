@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
+const AppError = require('./ErrorHandler/appError');
 
 exports.generaToken = (key, time) => {
   return jwt.sign(key, process.env.JWT_SECRET, {
@@ -55,7 +56,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(new Error('Please upload only images'));
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
   }
 };
 
