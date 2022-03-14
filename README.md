@@ -12,6 +12,7 @@ From the project folder , install dependencies
 ```bash
 npm install
 ```
+And then , you must create .env file base on .env.example file
 
 ### Databases seeding
 
@@ -19,7 +20,8 @@ npm install
 npm run db:dev
 ```
 ### Run the test
-Before run this project , you have to run TEST to make sure everything working 
+Before run this project , you have to run TEST to make sure everything working. 
+
 
 1. Seeding admin acccount
 ```bash
@@ -31,7 +33,6 @@ npm run test
 ```
 All tests should pass.
 ### Start the Server
-Before start the server , you must create .env file base on .env.example file , then start the server
 ```bash
 npm start
 ```
