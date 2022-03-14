@@ -1,0 +1,595 @@
+{
+  "info": {
+    "_postman_id": "d2727a7d-02ca-4ada-aa95-62141a065d23",
+    "name": "projectdemo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "SIGN UP",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"abcd@gmail.com\",\r\n    \"username\" : \"\",\r\n    \"password\" : \"sasas\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:5000/api/users/signup",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "users", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "LOGIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"jwt\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"admin@gmail.com\",\r\n    \"password\" : \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:5000/api/users/login",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "users", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CHANGE PASSWORD",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"oldPwd\" : \"123456\",\r\n    \"newPwd\" : \"1234567\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "127.0.0.1:5000/api/users/updateMyPassword",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "users", "updateMyPassword"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UPDATE ME",
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": "/C:/Users/TrungHieu/Desktop/dog.png"
+                },
+                {
+                  "key": "phone",
+                  "value": "999999",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "age",
+                  "value": "9",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "127.0.0.1:5000/api/users/updateMe",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "users", "updateMe"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Class",
+      "item": [
+        {
+          "name": "Admin",
+          "item": [
+            {
+              "name": "CREATE CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"subject\":\"kkkk\",\r\n    \"maxStudent\" : 23,\r\n    \"startDate\" : \"03/05/2023\",\r\n    \"endDate\" : \"03/04/2024\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", ""]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "UPDATE CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"subject\" : \"JS\",\r\n    \"maxStudent\" : 11,\r\n    \"status\" : \"open\"\r\n\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/1",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "DELETE CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/5",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "5"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "SUBMIT CLASS REGISTRATION",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"classId\" : \"1\",\r\n    \"userId\" : \"5\",\r\n    \"action\" : \"accept\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/admin/submit",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "admin", "submit"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "LIST REGISTERED CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/listRegistered",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "listRegistered"],
+                  "query": [
+                    {
+                      "key": "action",
+                      "value": "reject,accept",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "VIEW USER IN CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/viewUser/1",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "viewUser", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "CREATE CALENDAR",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"dayOfWeek\" : \"2\",\r\n    \"openTime\" : \"15:30\",\r\n    \"closeTime\" : \"18:00\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/calendar",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "calendar"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "UPDATE CALENDAR",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"dayOfWeek\" : \"3\",\r\n    \"openTime\" : \"09:00\"\r\n  \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/calendar/1",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "calendar", "1"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ASSIGN CALENDAR FOR CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"classId\":\"4\",\r\n    \"calendarId\" : \"5\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/classCalendar",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "classCalendar"]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "User-Class",
+          "item": [
+            {
+              "name": "Register Class",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n\"classId\" : \"3\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/register",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "register"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "CANCEL REGIS CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/3/cancel",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "3", "cancel"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET MY REGISTERED CLASS",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{jwt}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/myClass",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "myClass"],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "cancel",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "GET CALENDAR CLASS",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "127.0.0.1:5000/api/classes/calendar/?class=3",
+                  "host": ["127", "0", "0", "1"],
+                  "port": "5000",
+                  "path": ["api", "classes", "calendar", ""],
+                  "query": [
+                    {
+                      "key": "class",
+                      "value": "3"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "GET ALL CLASS",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "127.0.0.1:5000/api/classes?status=open,pending",
+              "host": ["127", "0", "0", "1"],
+              "port": "5000",
+              "path": ["api", "classes"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "open,pending"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
