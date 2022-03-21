@@ -4,14 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Header from './component/Header';
+import Home from './component/Home';
+import SignUp from './component/Signup';
+import SignIn from './component/SignIn';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <App />
       <Switch>
-        <Route path='/login' component={Header} />
+        <Route path='/' exact component={Home} />
+        <Route path='/signup' exact component={SignUp} />
+        <Route path='/signin' exact component={SignIn} />
       </Switch>
     </Router>
   </React.StrictMode>,

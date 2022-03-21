@@ -1,6 +1,1 @@
-
-node_modules/
-.env
-env
-public/image/user
-coverage/
+node_modules
