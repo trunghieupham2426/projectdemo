@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 
 const SignIn = (props) => {
   let iniState = {
@@ -7,6 +8,8 @@ const SignIn = (props) => {
     password: '',
   };
   const [state, setState] = useState(iniState);
+  const dispatch = useDispatch();
+
   const signinHandler = async (e) => {
     e.preventDefault();
     try {
@@ -21,9 +24,10 @@ const SignIn = (props) => {
       // console.log(res);
       if (res.data.status === 'success') {
         let auth = {
-          auth_token: res.data.token,
+          token: res.data.token,
           user: res.data.data.user,
         };
+        dispatch({ type: 'LOGGED_IN' });
         localStorage.setItem('appState', JSON.stringify(auth));
         props.history.push('/');
       }
@@ -43,6 +47,7 @@ const SignIn = (props) => {
 
   return (
     <div className='signin'>
+      <div>LOGIN</div>
       <form>
         <input
           type='email'

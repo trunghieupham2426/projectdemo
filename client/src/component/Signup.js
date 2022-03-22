@@ -45,6 +45,7 @@ const SignUp = () => {
 
   return (
     <div className='signup'>
+      <div>Register</div>
       <form>
         <input
           type='email'
