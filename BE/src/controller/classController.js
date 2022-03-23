@@ -20,8 +20,7 @@ const registerClass = catchAsync(async (req, res, next) => {
     );
   }
   const currentRegis = await Regis.findOne({ where: { classId, userId } });
-
-  if (currentRegis) {
+  if (currentRegis && currentRegis.dataValues.status === 'pending') {
     return next(new AppError('you  already register this class', 400));
   }
   await Regis.create({ classId, userId });
@@ -43,13 +42,14 @@ const cancelRegisClass = catchAsync(async (req, res, next) => {
     where: { classId, userId, status: 'pending' },
   });
   if (!cancelClass) {
-    return next(new AppError(`this class already cancel or not pending`, 400));
+    return next(new AppError(`this class already cancel`, 400));
   }
   cancelClass.status = 'cancel';
   cancelClass.save();
   res.status(200).json({
     status: 'success',
     message: 'cancel successfully',
+    data: cancelClass,
   });
 });
 

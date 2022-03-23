@@ -1,4 +1,5 @@
 const { Model } = require('sequelize');
+const moment = require('moment');
 
 module.exports = (sequelize, Sequelize) => {
   class Regis extends Model {
@@ -38,6 +39,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       regisDate: {
         type: Sequelize.DATE,
+        get() {
+          return moment(this.getDataValue('regisDate')).format('YYYY-MM-DD');
+        },
       },
       admAction: {
         type: Sequelize.ENUM('accept', 'reject'),

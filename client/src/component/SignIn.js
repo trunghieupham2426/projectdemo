@@ -23,12 +23,8 @@ const SignIn = (props) => {
       );
       // console.log(res);
       if (res.data.status === 'success') {
-        let auth = {
-          token: res.data.token,
-          user: res.data.data.user,
-        };
         dispatch({ type: 'LOGGED_IN' });
-        localStorage.setItem('appState', JSON.stringify(auth));
+        localStorage.setItem('token', JSON.stringify(res.data.token));
         props.history.push('/');
       }
     } catch (err) {
@@ -46,28 +42,33 @@ const SignIn = (props) => {
   };
 
   return (
-    <div className='signin'>
-      <div>LOGIN</div>
-      <form>
-        <input
-          type='email'
-          placeholder='Email'
-          name='email'
-          onChange={onChange}
-          value={state.email}
-        />
-        <input
-          type='password'
-          placeholder='Password'
-          name='password'
-          onChange={onChange}
-          value={state.password}
-        />
-        <button type='submit' className='btn' onClick={signinHandler}>
-          Login
-        </button>
-      </form>
-    </div>
+    <>
+      <div className='form'>
+        <form onSubmit={signinHandler}>
+          <label>Email</label>
+          <br />
+          <input
+            type='email'
+            placeholder='Email'
+            name='email'
+            onChange={onChange}
+            value={state.email}
+          />
+          <br />
+          <label>Password</label>
+          <br />
+          <input
+            type='password'
+            placeholder='Password'
+            name='password'
+            onChange={onChange}
+            value={state.password}
+          />
+          <br />
+          <input type='submit' className='btn' value='Login' />
+        </form>
+      </div>
+    </>
   );
 };
 

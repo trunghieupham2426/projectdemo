@@ -44,9 +44,10 @@ const SignUp = () => {
   };
 
   return (
-    <div className='signup'>
-      <div>Register</div>
-      <form>
+    <div className='form'>
+      <form onSubmit={signupHandler}>
+        <label>Email</label>
+        <br />
         <input
           type='email'
           placeholder='Email'
@@ -54,13 +55,17 @@ const SignUp = () => {
           onChange={onChange}
           value={state.email}
         />
+        <label>Username</label>
+        <br />
         <input
-          type='username'
+          type='text'
           placeholder='Username'
           name='username'
           onChange={onChange}
           value={state.username}
         />
+        <label>Password</label>
+        <br />
         <input
           type='password'
           placeholder='Password'
@@ -68,9 +73,7 @@ const SignUp = () => {
           onChange={onChange}
           value={state.password}
         />
-        <button type='submit' className='btn' onClick={signupHandler}>
-          Login
-        </button>
+        <input type='submit' className='btn' value='Sign Up' />
       </form>
     </div>
   );

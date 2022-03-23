@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../axiosConfig';
+import axios from 'axios';
 
 const ClassDetail = (props) => {
   const [course, setCourse] = useState({});
@@ -9,13 +9,12 @@ const ClassDetail = (props) => {
 
   const registerClass = async () => {
     try {
-      const res = await axiosInstance.post(
+      const res = await axios.post(
         'http://127.0.0.1:5000/api/classes/register',
         { classId: id }
       );
       alert(res.data.message);
     } catch (err) {
-      // console.log(err.response);
       alert(err.response.data.message);
     }
   };
@@ -23,7 +22,7 @@ const ClassDetail = (props) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await axiosInstance.get(
+        const res = await axios.get(
           `http://127.0.0.1:5000/api/classes/calendar/?class=${id}`
         );
         setCourse(res.data.data);

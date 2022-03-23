@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 
 const Header = (props) => {
+  const [avatar, setAvatar] = useState(
+    'https://res.cloudinary.com/dyw35assc/image/upload/v1644906261/DEV/default_gphmz1.png'
+  );
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const dispatch = useDispatch();
   const logOutHandler = () => {
@@ -10,6 +14,15 @@ const Header = (props) => {
     dispatch({ type: 'LOGGED_OUT' });
     localStorage.clear();
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await axios.get('http://127.0.0.1:5000/api/users/getme');
+      console.log(res);
+      setAvatar(res.data.data.avatarPath);
+    }
+    fetchData();
+  }, []);
   const renderNav = () => {
     if (isLoggedIn) {
       return (
@@ -21,6 +34,11 @@ const Header = (props) => {
             <Link to='/myclass'>My Class</Link>
           </li>
           <li onClick={logOutHandler}>
+            <img
+              src={avatar}
+              alt='err'
+              style={{ width: '20px', heigh: '20px' }}
+            />
             <Link to='/'>Log Out</Link>
           </li>
         </>

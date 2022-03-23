@@ -34,6 +34,18 @@ const updateMe = catchAsync(async (req, res, next) => {
   user.save();
 });
 
+const getMe = catchAsync(async (req, res, next) => {
+  const id = req.user.id;
+  const user = await User.findOne({
+    where: { id },
+    attributes: { exclude: ['password', 'role', 'countLogin', 'isActive'] },
+  });
+  res.status(200).json({
+    status: 'success',
+    data: user,
+  });
+});
+
 const updatePassword = catchAsync(async (req, res, next) => {
   const { oldPwd, newPwd } = req.body;
   const user = await User.findOne({
@@ -143,4 +155,5 @@ module.exports = {
   updateMe: updateMe,
   uploadAvatar: uploadAvatar,
   verifyUserEmail: verifyUserEmail,
+  getMe: getMe,
 };

@@ -8,7 +8,9 @@ import Home from './component/Home';
 import SignUp from './component/Signup';
 import SignIn from './component/SignIn';
 import ClassDetail from './component/ClassDetail';
-
+import MyClass from './component/MyClass';
+import MyProfile from './component/MyProfile';
+import axios from 'axios';
 // redux
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -17,6 +19,21 @@ import rootReducer from './reducer/rootReducer';
 const persistedState = loadFromLocalStorage('stateInRedux');
 const store = createStore(rootReducer, persistedState);
 store.subscribe(() => saveToLocalStorage('stateInRedux', store.getState()));
+
+axios.interceptors.request.use(
+  (config) => {
+    if (!config.headers.Authorization) {
+      const token = JSON.parse(localStorage.getItem('token'));
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 ReactDOM.render(
   <React.StrictMode>
@@ -27,6 +44,8 @@ ReactDOM.render(
           <Route path='/' exact component={Home} />
           <Route path='/signup' component={SignUp} />
           <Route path='/signin' exact component={SignIn} />
+          <Route path='/myclass' exact component={MyClass} />
+          <Route path='/myprofile' exact component={MyProfile} />
           <Route path='/classes/:id' exact component={ClassDetail} />
         </Switch>
       </Router>

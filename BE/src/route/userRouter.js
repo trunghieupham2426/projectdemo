@@ -12,6 +12,7 @@ const {
   updatePassword,
   updateMe,
   uploadAvatar,
+  getMe,
 } = require('../controller/userController');
 
 router.get('/', (req, res) => {
@@ -22,6 +23,7 @@ router.get('/verify/:token', verifyUserEmail);
 router.post('/signup', validate.signUpValidate, signup);
 router.post('/login', auth.loginLimiter, login);
 router.patch('/updateMyPassword', auth.protectingRoutes, updatePassword);
+router.get('/getme', auth.protectingRoutes, getMe);
 router.patch(
   '/updateMe',
   auth.protectingRoutes,
