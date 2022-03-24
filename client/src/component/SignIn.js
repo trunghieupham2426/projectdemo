@@ -21,10 +21,11 @@ const SignIn = (props) => {
         'http://127.0.0.1:5000/api/users/login',
         data
       );
-      // console.log(res);
+      console.log(res);
       if (res.data.status === 'success') {
         dispatch({ type: 'LOGGED_IN' });
         localStorage.setItem('token', JSON.stringify(res.data.token));
+        localStorage.setItem('role', res.data.data.user.role);
         props.history.push('/');
       }
     } catch (err) {

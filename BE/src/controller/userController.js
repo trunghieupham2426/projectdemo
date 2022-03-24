@@ -95,8 +95,16 @@ const login = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError('your email not correct', 400));
   }
-  const { email, password, isActive, countLogin, avatarPath, username, id } =
-    user;
+  const {
+    email,
+    password,
+    isActive,
+    countLogin,
+    avatarPath,
+    username,
+    id,
+    role,
+  } = user;
   if (countLogin >= 3 || !isActive) {
     return next(
       new AppError(
@@ -124,6 +132,7 @@ const login = catchAsync(async (req, res, next) => {
         username: username,
         avatarPath: avatarPath,
         id: id,
+        role: role,
       },
     },
   });

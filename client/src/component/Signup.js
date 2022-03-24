@@ -21,12 +21,7 @@ const SignUp = () => {
         data
       );
       if (res.data.status === 'success') {
-        setState((prevState) => ({
-          ...prevState,
-          email: '',
-          password: '',
-          username: '',
-        }));
+        setState(iniState);
         alert('please check your email to verify account');
       }
     } catch (err) {

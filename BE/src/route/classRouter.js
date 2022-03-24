@@ -21,6 +21,7 @@ const {
   submitClassRegistration,
   viewUserInClass,
   getListRegisterClass,
+  findClass,
 } = require('../controller/adminController');
 
 const auth = require('../middleware/auth');
@@ -45,7 +46,8 @@ router
     validate.classValidate,
     updateClass
   )
-  .delete(auth.protectingRoutes, auth.checkRole('admin'), deleteClass);
+  .delete(auth.protectingRoutes, auth.checkRole('admin'), deleteClass)
+  .get(auth.protectingRoutes, auth.checkRole('admin'), findClass);
 
 router.put(
   '/admin/submit',

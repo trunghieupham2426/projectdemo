@@ -10,6 +10,7 @@ import SignIn from './component/SignIn';
 import ClassDetail from './component/ClassDetail';
 import MyClass from './component/MyClass';
 import MyProfile from './component/MyProfile';
+import MyAdmin from './component/admin/MyAdmin';
 import axios from 'axios';
 // redux
 import { Provider } from 'react-redux';
@@ -46,6 +47,7 @@ ReactDOM.render(
           <Route path='/signin' exact component={SignIn} />
           <Route path='/myclass' exact component={MyClass} />
           <Route path='/myprofile' exact component={MyProfile} />
+          <Route path='/myadmin' exact component={MyAdmin} />
           <Route path='/classes/:id' exact component={ClassDetail} />
         </Switch>
       </Router>

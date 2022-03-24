@@ -68,11 +68,26 @@ const updateClass = catchAsync(async (req, res, next) => {
   });
 });
 
+const findClass = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const currentClass = await Class.findOne({ where: { id } });
+  if (!currentClass) {
+    return next(new AppError('No class founded'), 404);
+  }
+  res.status(200).json({
+    status: 'success',
+    data: currentClass,
+  });
+});
+
 const deleteClass = catchAsync(async (req, res, next) => {
   const classId = req.params.id;
   const currentClass = await Class.findOne({ where: { id: classId } });
   if (!currentClass) {
     return next(new AppError('No Class found with this id', 404));
+  }
+  if (currentClass.currentStudent !== 0) {
+    return next(new AppError('Class have student , can not delete', 400));
   }
   await currentClass.destroy();
   res.status(200).json({
@@ -247,4 +262,5 @@ module.exports = {
   submitClassRegistration,
   getListRegisterClass,
   viewUserInClass,
+  findClass,
 };

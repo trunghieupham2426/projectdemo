@@ -14,6 +14,7 @@ module.exports = {
           model: 'Classes',
           key: 'id',
         },
+        onDelete: 'cascade',
       },
       calendarId: {
         type: Sequelize.INTEGER,

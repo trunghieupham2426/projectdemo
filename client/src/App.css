@@ -5,14 +5,21 @@
 body {
   margin: 0;
   font-family: sans-serif;
+  background: #f2f2f2;
 }
 ul {
   list-style: none;
 }
-
-.header {
-  background-color: #f1f1f1;
+.menu {
+  background: rgb(148, 176, 229);
+  height: 50px;
+  display: flex;
+  align-items: center;
 }
+.header {
+  flex: 1;
+}
+
 .header-right {
   display: flex;
   align-items: center;
@@ -40,7 +47,7 @@ ul {
 .myclass {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
-  width: 50%;
+  width: 80%;
 }
 
 .course td,
@@ -78,7 +85,8 @@ ul {
 
 input[type='text'],
 input[type='email'],
-input[type='password'] {
+input[type='password'],
+input[type='date'] {
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
@@ -124,4 +132,43 @@ input[type='submit'] {
   color: white;
   font-weight: bold;
   line-height: 25px;
+}
+.sidebar {
+  display: flex;
+}
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f1f1f1;
+  width: 250px;
+  background: #f1f1f1;
+}
+.sidebar ul li {
+  text-decoration: none;
+  margin: 20px 0;
+  padding: 20px;
+  display: inline-block;
+  height: 20px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.createClass {
+  flex: 1;
+  border-left: 1px solid cornflowerblue;
+}
+
+.viewClass {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.choose form {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.updateClass {
+  width: 25%;
 }

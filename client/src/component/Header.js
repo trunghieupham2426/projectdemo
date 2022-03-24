@@ -8,7 +8,9 @@ const Header = (props) => {
     'https://res.cloudinary.com/dyw35assc/image/upload/v1644906261/DEV/default_gphmz1.png'
   );
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
+  const isAdmin = +localStorage.getItem('role');
   const dispatch = useDispatch();
+
   const logOutHandler = () => {
     window.location.reload();
     dispatch({ type: 'LOGGED_OUT' });
@@ -18,7 +20,7 @@ const Header = (props) => {
   useEffect(() => {
     async function fetchData() {
       const res = await axios.get('http://127.0.0.1:5000/api/users/getme');
-      console.log(res);
+      // console.log(res);
       setAvatar(res.data.data.avatarPath);
     }
     fetchData();
@@ -27,6 +29,14 @@ const Header = (props) => {
     if (isLoggedIn) {
       return (
         <>
+          {isAdmin ? (
+            <li>
+              {' '}
+              <Link to='/myadmin'>My Admin</Link>{' '}
+            </li>
+          ) : (
+            ''
+          )}
           <li>
             <Link to='/myprofile'>Profile</Link>
           </li>

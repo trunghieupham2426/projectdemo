@@ -13,6 +13,7 @@ module.exports = (sequelize, Sequelize) => {
         through: 'Regis',
         foreignKey: 'userId',
         otherKey: 'classId',
+        onDelete: 'cascade',
       });
     }
   }

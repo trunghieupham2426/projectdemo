@@ -14,6 +14,7 @@ module.exports = {
           model: 'Classes',
           key: 'id',
         },
+        onDelete: 'cascade',
       },
       userId: {
         type: Sequelize.INTEGER,
