@@ -46,8 +46,14 @@ router
     validate.classValidate,
     updateClass
   )
-  .delete(auth.protectingRoutes, auth.checkRole('admin'), deleteClass)
-  .get(auth.protectingRoutes, auth.checkRole('admin'), findClass);
+  .delete(auth.protectingRoutes, auth.checkRole('admin'), deleteClass);
+
+router.get(
+  '/findclass/:id',
+  auth.protectingRoutes,
+  auth.checkRole('admin'),
+  findClass
+);
 
 router.put(
   '/admin/submit',

@@ -21,6 +21,7 @@ const persistedState = loadFromLocalStorage('stateInRedux');
 const store = createStore(rootReducer, persistedState);
 store.subscribe(() => saveToLocalStorage('stateInRedux', store.getState()));
 
+// axios.defaults.baseURL = 'http://127.0.0.1:5000/api';
 axios.interceptors.request.use(
   (config) => {
     if (!config.headers.Authorization) {
@@ -30,6 +31,7 @@ axios.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+    config.baseURL = 'http://127.0.0.1:5000/api';
 
     return config;
   },

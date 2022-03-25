@@ -72,7 +72,7 @@ const findClass = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   const currentClass = await Class.findOne({ where: { id } });
   if (!currentClass) {
-    return next(new AppError('No class founded'), 404);
+    return next(new AppError('No class founded '), 404);
   }
   res.status(200).json({
     status: 'success',

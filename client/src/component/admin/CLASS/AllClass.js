@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import UpdateClass from './UpdateClass';
-
+import { fetchData } from '../../../utils/helperFn';
 const AllClass = () => {
   const [course, setCourse] = useState([]);
   const [status, setStatus] = useState('open');
@@ -11,17 +10,7 @@ const AllClass = () => {
     setId(val);
   };
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await axios.get(
-          'http://127.0.0.1:5000/api/classes/?status=open,close,pending'
-        );
-        setCourse(res.data.data);
-      } catch (err) {
-        console.log(err.response);
-      }
-    }
-    fetchData();
+    fetchData('/classes/?status=open,close,pending', setCourse);
   }, []);
 
   const filterHandler = (e) => {
@@ -31,18 +20,17 @@ const AllClass = () => {
 
   const searchHandler = async (e) => {
     e.preventDefault();
-    const res = await axios.get(
-      `http://127.0.0.1:5000/api/classes/?status=${status}`
-    );
-    setCourse(res.data.data);
+    fetchData(`/classes/?status=${status}`, setCourse);
   };
 
   const deleteClass = async (id) => {
     try {
-      const res = await axios.delete(`http://127.0.0.1:5000/api/classes/${id}`);
-      console.log(res);
+      await axios.delete(`/classes/${id}`);
+      window.location.reload();
+      alert('delete class successfully');
     } catch (err) {
       console.log(err.response);
+      alert(err.response.data.message);
     }
   };
 

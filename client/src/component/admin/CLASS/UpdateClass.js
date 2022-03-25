@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { fetchData } from '../../../utils/helperFn';
 
 const UpdateClass = (props) => {
   // console.log(props);
@@ -13,22 +13,9 @@ const UpdateClass = (props) => {
   };
 
   const [state, setState] = useState(iniState);
+
   useEffect(() => {
-    async function fetchData() {
-      const res = await axios.get(
-        `http://127.0.0.1:5000/api/classes/${props.id}`
-      );
-      // console.log(res);
-      setState((prevState) => ({
-        ...prevState,
-        subject: res.data.data.subject,
-        maxStudent: res.data.data.maxStudent,
-        startDate: res.data.data.startDate,
-        endDate: res.data.data.endDate,
-        status: res.data.data.status,
-      }));
-    }
-    fetchData();
+    fetchData(`/classes/findclass/${props.id}`, setState);
   }, [props.id]);
 
   const onChange = (e) => {
@@ -44,16 +31,12 @@ const UpdateClass = (props) => {
     e.preventDefault();
     try {
       const data = { ...state };
-      const res = await axios.patch(
-        `http://127.0.0.1:5000/api/classes/${props.id}`,
-        data
-      );
-      if (res.data.status === 'success') {
-        window.location.reload();
-        alert('update class successfully');
-      }
+      data.id = undefined;
+      data.currentStudent = undefined;
+      await axios.patch(`/classes/${props.id}`, data);
+      window.location.reload();
+      alert('update class successfully');
     } catch (err) {
-      // console.log(err.response);
       alert(err.response.data.message);
     }
   };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import { fetchData } from '../utils/helperFn';
 
 const Header = (props) => {
   const [avatar, setAvatar] = useState(
@@ -18,12 +18,7 @@ const Header = (props) => {
   };
 
   useEffect(() => {
-    async function fetchData() {
-      const res = await axios.get('http://127.0.0.1:5000/api/users/getme');
-      // console.log(res);
-      setAvatar(res.data.data.avatarPath);
-    }
-    fetchData();
+    fetchData('/users/getme', setAvatar, 'avatarPath');
   }, []);
   const renderNav = () => {
     if (isLoggedIn) {

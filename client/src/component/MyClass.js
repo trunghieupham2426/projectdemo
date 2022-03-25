@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { fetchData } from '../utils/helperFn';
+
 const MyClass = () => {
   const [myClass, setMyClass] = useState([]);
   useEffect(() => {
-    async function fetchData() {
-      const res = await axios.get('http://127.0.0.1:5000/api/classes/myClass');
-      setMyClass(res.data.data);
-    }
-    fetchData();
+    fetchData('/classes/myClass', setMyClass);
   }, []);
+
   const cancelClass = async (id) => {
     try {
-      const res = await axios.patch(
-        `http://127.0.0.1:5000/api/classes/${id}/cancel`
-      );
+      const res = await axios.patch(`/classes/${id}/cancel`);
       window.location.reload();
       alert(res.data.message);
     } catch (err) {
@@ -30,7 +27,12 @@ const MyClass = () => {
         <td>{el.status}</td>
         <td>{el.regisDate}</td>
         <td>
-          <button onClick={() => cancelClass(el.Class.id)}>cancel</button>
+          <button
+            disabled={el.status === 'cancel'}
+            onClick={() => cancelClass(el.Class.id)}
+          >
+            cancel
+          </button>
         </td>
       </tr>
     );

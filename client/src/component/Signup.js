@@ -16,10 +16,7 @@ const SignUp = () => {
         password: state.password,
         username: state.username,
       };
-      const res = await axios.post(
-        'http://127.0.0.1:5000/api/users/signup',
-        data
-      );
+      const res = await axios.post('/users/signup', data);
       if (res.data.status === 'success') {
         setState(iniState);
         alert('please check your email to verify account');

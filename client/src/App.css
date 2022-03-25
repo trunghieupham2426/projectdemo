@@ -77,12 +77,6 @@ ul {
   color: white;
 }
 
-.class_detail {
-  margin: auto;
-  text-align: center;
-  background-color: #f2f2f2;
-}
-
 input[type='text'],
 input[type='email'],
 input[type='password'],
@@ -171,4 +165,12 @@ input[type='submit'] {
 
 .updateClass {
   width: 25%;
+}
+
+.custom-li li::before {
+  content: '\f00c'; /* FontAwesome Unicode */
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-left: -1.3em; /* same as padding-left set on li */
+  width: 1.3em; /* same as padding-left set on li */
 }

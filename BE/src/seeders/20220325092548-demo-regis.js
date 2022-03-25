@@ -1,41 +1,55 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert('Class_Calendars', [
+    return queryInterface.bulkInsert('Regis', [
       {
         classId: '1',
-        calendarId: '2',
-      },
-      {
-        classId: '1',
-        calendarId: '3',
+        userId: '1',
+        status: 'pending',
       },
       {
         classId: '1',
-        calendarId: '4',
+        userId: '2',
+        status: 'pending',
+      },
+      {
+        classId: '1',
+        userId: '3',
+        status: 'pending',
+      },
+      {
+        classId: '1',
+        userId: '4',
+        status: 'pending',
       },
       {
         classId: '2',
-        calendarId: '1',
+        userId: '4',
+        status: 'pending',
       },
       {
         classId: '2',
-        calendarId: '6',
+        userId: '3',
+        status: 'pending',
       },
       {
         classId: '2',
-        calendarId: '2',
+        userId: '2',
+        status: 'cancel',
+      },
+      {
+        classId: '2',
+        userId: '1',
+        status: 'cancel',
       },
       {
         classId: '3',
-        calendarId: '2',
+        userId: '1',
+        status: 'cancel',
       },
       {
         classId: '3',
-        calendarId: '4',
-      },
-      {
-        classId: '3',
-        calendarId: '5',
+        userId: '2',
+        status: 'pending',
       },
     ]);
   },

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import AllClass from './CLASS/AllClass';
 import CreateClass from './CLASS/CreateClass';
+import ListRegistration from './CLASS/ListRegistration';
+import ViewUserInClass from './CLASS/ViewUserInClass';
 const SideBar = () => {
   const [status, setStatus] = useState('viewClass');
 
@@ -20,6 +22,8 @@ const SideBar = () => {
         {
           createClass: <CreateClass />,
           viewClass: <AllClass />,
+          listRegis: <ListRegistration />,
+          viewUser: <ViewUserInClass />,
         }[status]
       }
     </div>

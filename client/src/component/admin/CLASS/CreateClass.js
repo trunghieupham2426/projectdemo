@@ -22,14 +22,10 @@ const CreateClass = () => {
   const createClassHandler = async (e) => {
     e.preventDefault();
     try {
-      const data = { ...state };
-      const res = await axios.post(`http://127.0.0.1:5000/api/classes/`, data);
-      if (res.data.status === 'success') {
-        setState(iniState);
-        alert('create class successfully');
-      }
+      await axios.post(`/classes/`, state);
+      setState(iniState);
+      alert('create class successfully');
     } catch (err) {
-      console.log(err.response);
       alert(err.response.data.message);
     }
   };
@@ -76,7 +72,7 @@ const CreateClass = () => {
             value={state.endDate}
           />
           <br />
-          <input type='submit' className='btn' value='Submit' />
+          <input type='submit' className='btn' value='Create Class' />
         </form>
       </div>
     </div>

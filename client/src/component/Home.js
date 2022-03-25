@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { fetchData } from '../utils/helperFn';
 
 const Home = () => {
   //For fun 🤣
@@ -11,16 +12,9 @@ const Home = () => {
   const [status, setStatus] = useState('open');
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await axios.get('http://127.0.0.1:5000/api/classes/');
-        setCourse(res.data.data);
-      } catch (err) {
-        console.log(err.response);
-      }
-    }
-    fetchData();
+    fetchData('/classes/?status=open,close,pending', setCourse);
   }, []);
+
   useEffect(() => {
     async function fetchData() {
       const chuck = await axios.get('https://api.chucknorris.io/jokes/random');
@@ -36,10 +30,7 @@ const Home = () => {
 
   const searchHandler = async (e) => {
     e.preventDefault();
-    const res = await axios.get(
-      `http://127.0.0.1:5000/api/classes/?status=${status}`
-    );
-    setCourse(res.data.data);
+    fetchData(`/classes/?status=${status}`, setCourse);
   };
 
   const showClass = course.map((el) => {
@@ -63,16 +54,18 @@ const Home = () => {
   return (
     <>
       {isLoggedIn ? (
-        <div>
-          <form>
-            <label>Choose a status:</label>
-            <select name='status' onChange={onChangeHandler}>
-              <option value='open'>open</option>
-              <option value='pending'>pending</option>
-              <option value='close'>close</option>
-            </select>
-            <button onClick={searchHandler}>Search</button>
-          </form>
+        <div className='viewClass'>
+          <div className='choose'>
+            <form>
+              <label>Choose a status:</label>
+              <select name='status' onChange={onChangeHandler}>
+                <option value='open'>open</option>
+                <option value='pending'>pending</option>
+                <option value='close'>close</option>
+              </select>
+              <button onClick={searchHandler}>Search</button>
+            </form>
+          </div>
           <div className='home'>
             <table className='course'>
               <tr>

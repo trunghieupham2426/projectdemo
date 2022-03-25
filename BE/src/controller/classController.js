@@ -42,7 +42,7 @@ const cancelRegisClass = catchAsync(async (req, res, next) => {
     where: { classId, userId, status: 'pending' },
   });
   if (!cancelClass) {
-    return next(new AppError(`this class already cancel`, 400));
+    return next(new AppError(`Not pending , can not cancel`, 400));
   }
   cancelClass.status = 'cancel';
   cancelClass.save();

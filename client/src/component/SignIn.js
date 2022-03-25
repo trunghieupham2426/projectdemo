@@ -17,10 +17,7 @@ const SignIn = (props) => {
         email: state.email,
         password: state.password,
       };
-      const res = await axios.post(
-        'http://127.0.0.1:5000/api/users/login',
-        data
-      );
+      const res = await axios.post('users/login', data);
       console.log(res);
       if (res.data.status === 'success') {
         dispatch({ type: 'LOGGED_IN' });
